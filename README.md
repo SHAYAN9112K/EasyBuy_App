@@ -1,12 +1,11 @@
 # React-Native Ecommerce App :bomb:
 
-# Hi, We are Team Charlie! 👋
 
 [![Up to Date](https://github.com/ikatyang/emoji-cheat-sheet/workflows/Up%20to%20Date/badge.svg)](https://github.com/UsamaSarwar/reactnative-ecommerce-charlie)
 
 ## `Development Stack` ➡️ `MERN Stack`
 
-### `Backend on NodeJs` ➡️ [https://github.com/abidrazaa/backend-node](https://github.com/abidrazaa/backend-node)
+### `Backend on NodeJs` ➡️ [https://github.com/SHAYAN9112K/EasyBuy_Backend](https://github.com/SHAYAN9112K/EasyBuy_Backend)
 
 Open-Source React Native Ecommerce Cross Platform Mobile App :iphone:
 
@@ -42,7 +41,7 @@ Open-Source React Native Ecommerce Cross Platform Mobile App :iphone:
 To clone this repo, type the following command
 
 ```
-git clone https://github.com/UsamaSarwar/reactnative-ecommerce-charlie.git
+git clone https://github.com/SHAYAN9112K/EasyBuy_App.git
 ```
 
 ### `Node Package Manager`
@@ -85,6 +84,6 @@ The presentation of the Mockups can be seen from [here](https://www.youtube.com/
 
 ## Thanks to all the contributors ❤️
 
-<a href = "https://github.com/UsamaSarwar/reactnative-ecommerce-charlie">
+<!-- <a href = "https://github.com/UsamaSarwar/reactnative-ecommerce-charlie">
   <img src = "https://contrib.rocks/image?repo=UsamaSarwar/reactnative-ecommerce-charlie"/>
-</a>
+</a> -->
