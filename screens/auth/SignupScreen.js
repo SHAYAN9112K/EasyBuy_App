@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import { colors, network } from "../../constants";
 import CustomInput from "../../components/CustomInput";
+import PasswordInput from "../../components/PasswordInput";
 import header_logo from "../../assets/logo/logo.png";
 import CustomButton from "../../components/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +24,8 @@ const SignupScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [passShow, setPassShow] = useState(true);
+  const [passShow1, setPassShow1] = useState(true);
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -126,22 +129,44 @@ const SignupScreen = ({ navigation }) => {
               placeholderTextColor={colors.muted}
               radius={5}
             />
-            <CustomInput
+            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
+            <PasswordInput
               value={password}
               setValue={setPassword}
-              secureTextEntry={true}
+              secureTextEntry={passShow}
               placeholder={"Password"}
               placeholderTextColor={colors.muted}
               radius={5}
             />
-            <CustomInput
+             <TouchableOpacity onPress={()=>{setPassShow(!passShow)}}>
+            {passShow
+            ?
+            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
+            :
+            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color="black" />
+            }
+            
+            </TouchableOpacity>
+            </View>
+            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
+            <PasswordInput
               value={confirmPassword}
               setValue={setConfirmPassword}
-              secureTextEntry={true}
+              secureTextEntry={passShow1}
               placeholder={"Confirm Password"}
               placeholderTextColor={colors.muted}
               radius={5}
             />
+             <TouchableOpacity onPress={()=>{setPassShow1(!passShow1)}}>
+            {passShow1
+            ?
+            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
+            :
+            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color="black" />
+            }
+            
+            </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
         <View style={styles.buttomContainer}>

@@ -6,23 +6,27 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   ScrollView,
+  TouchableOpacity
 } from "react-native";
 
 import React, { useState } from "react";
 import { colors, network } from "../../constants";
 import CustomInput from "../../components/CustomInput";
+import PasswordInput from "../../components/PasswordInput";
 import header_logo from "../../assets/logo/logo.png";
 import CustomButton from "../../components/CustomButton";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import ProgressDialog from "react-native-progress-dialog";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isloading, setIsloading] = useState(false);
+  const [passShow, setPassShow] = useState(true);
 
   //method to store the authUser to aync storage
   _storeData = async (user) => {
@@ -138,14 +142,25 @@ const LoginScreen = ({ navigation }) => {
               placeholderTextColor={colors.muted}
               radius={5}
             />
-            <CustomInput
+            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
+            <PasswordInput
               value={password}
               setValue={setPassword}
-              secureTextEntry={true}
+              secureTextEntry={passShow}
               placeholder={"Password"}
               placeholderTextColor={colors.muted}
               radius={5}
             />
+            <TouchableOpacity onPress={()=>{setPassShow(!passShow)}}>
+            {passShow
+            ?
+            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
+            :
+            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color={colors.muted} />
+            }
+            
+            </TouchableOpacity>
+            </View>
             <View style={styles.forgetPasswordContainer}>
               <Text
                 onPress={() => navigation.navigate("forgetpassword")}
