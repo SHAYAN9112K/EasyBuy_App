@@ -17,6 +17,7 @@ import CustomButton from "../../components/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -26,6 +27,14 @@ const SignupScreen = ({ navigation }) => {
   const [error, setError] = useState("");
   const [passShow, setPassShow] = useState(true);
   const [passShow1, setPassShow1] = useState(true);
+  const [category, setCategory] = useState("");
+  const [open, setOpen] = useState(false);
+  const [statusDisable, setStatusDisable] = useState(false);
+  const [items, setItems] = useState([
+    { label: "User", value: "USER" },
+    { label: "Seller", value: "SELLER" },
+    { label: "Rider", value: "RIDER" },
+  ]);
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -115,6 +124,23 @@ const SignupScreen = ({ navigation }) => {
           </View>
           <View style={styles.formContainer}>
             <CustomAlert message={error} type={"error"} />
+            <DropDownPicker
+              placeholder={"Select User Type"}
+              open={open}
+              value={category}
+              items={items}
+              setOpen={setOpen}
+              setValue={setCategory}
+              setItems={setItems}
+              disabled={statusDisable}
+              disabledStyle={{
+                backgroundColor: colors.light,
+                borderColor: colors.white,
+              }}
+              labelStyle={{ color: colors.muted }}
+              style={{ borderColor: "#fff", elevation: 5 }}
+            />
+            {!open ?null:<View style={{height:120}}/>}
             <CustomInput
               value={name}
               setValue={setName}
@@ -129,43 +155,43 @@ const SignupScreen = ({ navigation }) => {
               placeholderTextColor={colors.muted}
               radius={5}
             />
-            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
-            <PasswordInput
-              value={password}
-              setValue={setPassword}
-              secureTextEntry={passShow}
-              placeholder={"Password"}
-              placeholderTextColor={colors.muted}
-              radius={5}
-            />
-             <TouchableOpacity onPress={()=>{setPassShow(!passShow)}}>
-            {passShow
-            ?
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
-            :
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color="black" />
-            }
-            
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <PasswordInput
+                value={password}
+                setValue={setPassword}
+                secureTextEntry={passShow}
+                placeholder={"Password"}
+                placeholderTextColor={colors.muted}
+                radius={5}
+              />
+              <TouchableOpacity onPress={() => { setPassShow(!passShow) }}>
+                {passShow
+                  ?
+                  <Ionicons style={{ marginVertical: 15, marginLeft: 15 }} name="eye-off" size={25} color={colors.muted} />
+                  :
+                  <Ionicons style={{ marginVertical: 15, marginLeft: 15 }} name="eye" size={25} color="black" />
+                }
+
+              </TouchableOpacity>
             </View>
-            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
-            <PasswordInput
-              value={confirmPassword}
-              setValue={setConfirmPassword}
-              secureTextEntry={passShow1}
-              placeholder={"Confirm Password"}
-              placeholderTextColor={colors.muted}
-              radius={5}
-            />
-             <TouchableOpacity onPress={()=>{setPassShow1(!passShow1)}}>
-            {passShow1
-            ?
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
-            :
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color="black" />
-            }
-            
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <PasswordInput
+                value={confirmPassword}
+                setValue={setConfirmPassword}
+                secureTextEntry={passShow1}
+                placeholder={"Confirm Password"}
+                placeholderTextColor={colors.muted}
+                radius={5}
+              />
+              <TouchableOpacity onPress={() => { setPassShow1(!passShow1) }}>
+                {passShow1
+                  ?
+                  <Ionicons style={{ marginVertical: 15, marginLeft: 15 }} name="eye-off" size={25} color={colors.muted} />
+                  :
+                  <Ionicons style={{ marginVertical: 15, marginLeft: 15 }} name="eye" size={25} color="black" />
+                }
+
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>

@@ -187,7 +187,7 @@ const LoginScreen = ({ navigation }) => {
         <View style={styles.buttomContainer}>
           <CustomButton text={"Login"} onPress={loginHandle} />
         </View>
-        <View style={styles.bottomContainer}>
+        {/* <View style={styles.bottomContainer}>
           <Text>Don't have an account?</Text>
           <Text
             onPress={() => navigation.navigate("signup")}
@@ -195,7 +195,7 @@ const LoginScreen = ({ navigation }) => {
           >
             signup
           </Text>
-        </View>
+        </View> */}
       </KeyboardAvoidingView>
     </InternetConnectionAlert>
   );
