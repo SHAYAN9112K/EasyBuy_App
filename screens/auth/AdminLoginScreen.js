@@ -88,30 +88,27 @@ const LoginScreen = ({ navigation }) => {
         if (
           result.status == 200 ||
           (result.status == 1 && result.success != false)
-        ) 
-        {
-          if (result?.data?.userType == "ADMIN") {
+        ) {
+          if (result?.data?.userType == "USER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an BUYER please navigate to ADMIN Login");
+            return setError("You are not an ADMIN please navigate to USER Login");
           }
           if (result?.data?.userType == "SELLER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an BUYER please navigate to SELLER Login");
+            return setError("You are not an ADMIN please navigate to SELLER Login");
           }
           if (result?.data?.userType == "RIDER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an BUYER please navigate to RIDER Login");
+            return setError("You are not an ADMIN please navigate to RIDER Login");
           }
-          if (result?.data?.userType == "USER"){
+          if (result?.data?.userType == "ADMIN") {
             _storeData(result.data);
             setIsloading(false);
-            navigation.replace("tab", { user: result.data }); // naviagte to User Dashboard
+            navigation.replace("dashboard", { authUser: result.data });
           }
-
-          
         } else {
           setIsloading(false);
           return setError(result.message);
@@ -124,7 +121,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <InternetConnectionAlert onChange={(connectionState) => {}}>
+    <InternetConnectionAlert onChange={(connectionState) => { }}>
       <KeyboardAvoidingView
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
@@ -133,8 +130,8 @@ const LoginScreen = ({ navigation }) => {
           <ProgressDialog visible={isloading} label={"Login ..."} />
           <StatusBar></StatusBar>
           <TouchableOpacity onPress={() => navigation.openDrawer()}>
-      <Ionicons name="menu-outline" size={24} color="black" />
-    </TouchableOpacity>
+            <Ionicons name="menu-outline" size={24} color="black" />
+          </TouchableOpacity>
           <View style={styles.welconeContainer}>
             <View>
               <Text style={styles.welcomeText}>Welcome to EasyBuy</Text>
@@ -147,7 +144,7 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.screenNameContainer}>
-            <Text style={styles.screenNameText}>User Login</Text>
+            <Text style={styles.screenNameText}>Admin Login</Text>
           </View>
           <View style={styles.formContainer}>
             <CustomAlert message={error} type={"error"} />
@@ -158,24 +155,24 @@ const LoginScreen = ({ navigation }) => {
               placeholderTextColor={colors.muted}
               radius={5}
             />
-            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
-            <PasswordInput
-              value={password}
-              setValue={setPassword}
-              secureTextEntry={passShow}
-              placeholder={"Password"}
-              placeholderTextColor={colors.muted}
-              radius={5}
-            />
-            <TouchableOpacity onPress={()=>{setPassShow(!passShow)}}>
-            {passShow
-            ?
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
-            :
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color={colors.muted} />
-            }
-            
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <PasswordInput
+                value={password}
+                setValue={setPassword}
+                secureTextEntry={passShow}
+                placeholder={"Password"}
+                placeholderTextColor={colors.muted}
+                radius={5}
+              />
+              <TouchableOpacity onPress={() => { setPassShow(!passShow) }}>
+                {passShow
+                  ?
+                  <Ionicons style={{ marginVertical: 15, marginLeft: 15 }} name="eye-off" size={25} color={colors.muted} />
+                  :
+                  <Ionicons style={{ marginVertical: 15, marginLeft: 15 }} name="eye" size={25} color={colors.muted} />
+                }
+
+              </TouchableOpacity>
             </View>
             <View style={styles.forgetPasswordContainer}>
               <Text

@@ -192,7 +192,7 @@ const ViewProductScreen = ({ navigation, route }) => {
             return (
               <ProductList
                 key={index}
-                image={product?.image}
+                image={`${network.serverip}/uploads/${product?.image}`}
                 title={product?.title}
                 category={product?.category?.title}
                 price={product?.price}

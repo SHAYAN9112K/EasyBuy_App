@@ -122,7 +122,7 @@ const DashboardScreen = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={async () => {
               await AsyncStorage.removeItem("authUser");
-              navigation.replace("drawers");
+              navigation.replace("login");
             }}
           >
             <Ionicons name="log-out" size={30} color={colors.muted} />

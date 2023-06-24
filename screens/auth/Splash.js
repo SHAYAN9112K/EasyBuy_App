@@ -23,7 +23,7 @@ const Splash = ({ navigation }) => {
         }
       } else {
         setTimeout(() => {
-          navigation.replace("login"); // // navigate to login screen if there is no authUser store in aysnc storage
+          navigation.replace("drawers"); // // navigate to login screen if there is no authUser store in aysnc storage
         }, 2000);
       }
     } catch (error) {

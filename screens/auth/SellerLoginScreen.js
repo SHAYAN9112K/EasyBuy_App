@@ -88,30 +88,27 @@ const LoginScreen = ({ navigation }) => {
         if (
           result.status == 200 ||
           (result.status == 1 && result.success != false)
-        ) 
-        {
-          if (result?.data?.userType == "ADMIN") {
+        ) {
+          if (result?.data?.userType == "USER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an BUYER please navigate to ADMIN Login");
-          }
-          if (result?.data?.userType == "SELLER") {
-            //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
-            setIsloading(false);
-            return setError("You are not an BUYER please navigate to SELLER Login");
+            return setError("You are not an SELLER please navigate to USER Login");
           }
           if (result?.data?.userType == "RIDER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an BUYER please navigate to RIDER Login");
+            return setError("You are not an SELLER please navigate to RIDER Login");
           }
-          if (result?.data?.userType == "USER"){
+          if (result?.data?.userType == "ADMIN") {
+            //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
+            setIsloading(false);
+            return setError("You are not an SELLER please navigate to ADMIN Login");
+          }
+          if (result?.data?.userType == "SELLER") {
             _storeData(result.data);
             setIsloading(false);
             navigation.replace("tab", { user: result.data }); // naviagte to User Dashboard
           }
-
-          
         } else {
           setIsloading(false);
           return setError(result.message);
@@ -147,7 +144,7 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.screenNameContainer}>
-            <Text style={styles.screenNameText}>User Login</Text>
+            <Text style={styles.screenNameText}>Seller Login</Text>
           </View>
           <View style={styles.formContainer}>
             <CustomAlert message={error} type={"error"} />

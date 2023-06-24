@@ -12,53 +12,64 @@ import React, { useState, useEffect } from "react";
 import { colors, network } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import ProductList from "../../components/ProductList/ProductList";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomInput from "../../components/CustomInput/";
 import ProgressDialog from "react-native-progress-dialog";
+import CategoryList from "../../components/CategoryList";
 
-const ViewProductScreen = ({ navigation, route }) => {
+const ViewCategoryScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
+  const [user, setUser] = useState({});
+
+  const getToken = (obj) => {
+    try {
+      setUser(JSON.parse(obj));
+    } catch (e) {
+      setUser(obj);
+      return obj.token;
+    }
+    return JSON.parse(obj).token;
+  };
+
   const [isloading, setIsloading] = useState(false);
   const [refeshing, setRefreshing] = useState(false);
   const [alertType, setAlertType] = useState("error");
 
   const [label, setLabel] = useState("Loading...");
   const [error, setError] = useState("");
-  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [foundItems, setFoundItems] = useState([]);
   const [filterItem, setFilterItem] = useState("");
 
-  var myHeaders = new Headers();
-  myHeaders.append("x-auth-token", authUser.token);
-
-  var requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  };
-
-  var ProductListRequestOptions = {
-    method: "GET",
-    redirect: "follow",
-  };
-
-  //method call on pull refresh
+  //method call on Pull refresh
   const handleOnRefresh = () => {
     setRefreshing(true);
-    fetchProduct();
+    fetchCategories();
     setRefreshing(false);
   };
-
-  //method to delete the specific order
+  //method to navigate to edit screen for specific catgeory
+  const handleEdit = (item) => {
+    navigation.navigate("editcategories", {
+      category: item,
+      authUser: authUser,
+    });
+  };
+  //method to delete the specific catgeory
   const handleDelete = (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append("x-auth-token", getToken(authUser));
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
     setIsloading(true);
-    console.log(`${network.serverip}/delete-product?id=${id}`);
-    fetch(`${network.serverip}/delete-product?id=${id}`, requestOptions)
+    fetch(`${network.serverip}/delete-category?id=${id}`, requestOptions) // API call
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
-          fetchProduct();
+          fetchCategories();
           setError(result.message);
           setAlertType("success");
         } else {
@@ -74,7 +85,7 @@ const ViewProductScreen = ({ navigation, route }) => {
       });
   };
 
-  //method for alert
+  // method for alert
   const showConfirmDialog = (id) => {
     return Alert.alert(
       "Are your sure?",
@@ -93,39 +104,46 @@ const ViewProductScreen = ({ navigation, route }) => {
     );
   };
 
-  //method the fetch the product data from server using API call
-  const fetchProduct = () => {
+  //method the fetch the catgeories from server using API call
+  const fetchCategories = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("x-auth-token", getToken(authUser));
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
     setIsloading(true);
-    fetch(`${network.serverip}/products`, ProductListRequestOptions)
+    fetch(`${network.serverip}/categories`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
-          setProducts(result.data);
-          setFoundItems(result.data);
+          setCategories(result.categories);
+          setFoundItems(result.categories);
           setError("");
-          setIsloading(false);
         } else {
           setError(result.message);
-          setIsloading(false);
         }
+        setIsloading(false);
       })
       .catch((error) => {
+        setIsloading(false);
         setError(error.message);
         console.log("error", error);
-        setIsloading(false);
       });
   };
 
-  //method to filer the orders for by title [search bar]
+  //method to filer the product for by title [search bar]
   const filter = () => {
     const keyword = filterItem;
     if (keyword !== "") {
-      const results = products?.filter((product) => {
-        return product?.title.toLowerCase().includes(keyword.toLowerCase());
+      const results = categories?.filter((item) => {
+        return item?.title.toLowerCase().includes(keyword.toLowerCase());
       });
       setFoundItems(results);
     } else {
-      setFoundItems(products);
+      setFoundItems(categories);
     }
   };
 
@@ -136,7 +154,7 @@ const ViewProductScreen = ({ navigation, route }) => {
 
   //fetch the categories on initial render
   useEffect(() => {
-    fetchProduct();
+    fetchCategories();
   }, []);
 
   return (
@@ -157,7 +175,7 @@ const ViewProductScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("addproduct", { authUser: authUser });
+            navigation.navigate("addcategories", { authUser: authUser });
           }}
         >
           <AntDesign name="plussquare" size={30} color={colors.muted} />
@@ -165,10 +183,10 @@ const ViewProductScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameText}>View Product</Text>
+          <Text style={styles.screenNameText}>View Categories</Text>
         </View>
         <View>
-          <Text style={styles.screenNameParagraph}>View all products</Text>
+          <Text style={styles.screenNameParagraph}>View all Categories</Text>
         </View>
       </View>
       <CustomAlert message={error} type={alertType} />
@@ -186,39 +204,29 @@ const ViewProductScreen = ({ navigation, route }) => {
         }
       >
         {foundItems && foundItems.length == 0 ? (
-          <Text>{`No product found with the name of ${filterItem}!`}</Text>
+          <Text>{`No category found with the title of ${filterItem}!`}</Text>
         ) : (
-          foundItems.map((product, index) => {
-            return (
-              <ProductList
-                key={index}
-                image={product?.image}
-                title={product?.title}
-                category={product?.category?.title}
-                price={product?.price}
-                qantity={product?.sku}
-                onPressView={() => {
-                  console.log("view is working " + product._id);
-                }}
-                onPressEdit={() => {
-                  navigation.navigate("editproduct", {
-                    product: product,
-                    authUser: authUser,
-                  });
-                }}
-                onPressDelete={() => {
-                  showConfirmDialog(product._id);
-                }}
-              />
-            );
-          })
+          foundItems.map((item, index) => (
+            <CategoryList
+              icon={`${network.serverip}/uploads/${item?.icon}`}
+              key={index}
+              title={item?.title}
+              description={item?.description}
+              onPressEdit={() => {
+                handleEdit(item);
+              }}
+              onPressDelete={() => {
+                showConfirmDialog(item?._id);
+              }}
+            />
+          ))
         )}
       </ScrollView>
     </View>
   );
 };
 
-export default ViewProductScreen;
+export default ViewCategoryScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -262,6 +270,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    marginBottom: 10,
   },
   screenNameText: {
     fontSize: 30,
