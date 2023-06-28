@@ -40,6 +40,8 @@ const CheckoutScreen = ({ navigation, route }) => {
     navigation.replace("drawers");
   };
 
+  
+
   //method to handle checkout
   const handleCheckout = async () => {
     setIsloading(true);
@@ -47,6 +49,7 @@ const CheckoutScreen = ({ navigation, route }) => {
     const value = await AsyncStorage.getItem("authUser");
     let user = JSON.parse(value);
     console.log("Checkout:", user.token);
+    let authEmail=user.email;
 
     myHeaders.append("x-auth-token", user.token);
     myHeaders.append("Content-Type", "application/json");
@@ -60,6 +63,7 @@ const CheckoutScreen = ({ navigation, route }) => {
         productId: product._id,
         price: product.price,
         quantity: product.quantity,
+        sellerEmail:product.sellerEmail
       };
       totalamount += parseInt(product.price) * parseInt(product.quantity);
       payload.push(obj);

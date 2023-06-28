@@ -125,7 +125,7 @@ const SellerDashboardScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.headingContainer}>
           <MaterialCommunityIcons name="menu-right" size={30} color="black" />
-          <Text style={styles.headingText}>Welcome, Seller</Text>
+          <Text style={styles.headingText}>Welcome, {authUser.email}</Text>
         </View>
         <View style={{ height: 370 }}>
           {data && (

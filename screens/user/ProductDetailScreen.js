@@ -26,7 +26,14 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
   //method to add item to cart(redux)
   const handleAddToCat = (item) => {
-    addCartItem(item);
+    if(quantity==0){
+      alert("Please Select Quantity")
+    }
+    else{
+      addCartItem(item);
+    }
+    
+    
   };
 
   //remove the authUser from async storage and navigate to login

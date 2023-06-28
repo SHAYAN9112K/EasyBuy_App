@@ -64,7 +64,7 @@ const SellerViewOrdersScreen = ({ navigation, route }) => {
       redirect: "follow",
     };
     setIsloading(true);
-    fetch(`${network.serverip}/admin/orders`, requestOptions)
+    fetch(`${network.serverip}/seller/myorders/${authUser.email}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {

@@ -31,6 +31,7 @@ const reducer = (state = [], action) => {
             updatedAt: action.payload.updatedAt,
             avaiableQuantity: action.payload.quantity,
             quantity: 1,
+            sellerEmail:action.payload.sellerEmail
           },
         ];
       }
