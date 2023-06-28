@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
           if (result?.data?.userType == "RIDER"){
             _storeData(result.data);
             setIsloading(false);
-            navigation.replace("tab", { user: result.data }); // naviagte to User Dashboard
+            navigation.replace("RiderDashboardScreen", { authUser: result.data });
           }
         } else {
           setIsloading(false);

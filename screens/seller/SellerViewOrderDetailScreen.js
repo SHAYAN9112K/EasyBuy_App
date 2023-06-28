@@ -16,6 +16,7 @@ import CustomButton from "../../components/CustomButton";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const SellerViewOrderDetailScreen = ({ navigation, route }) => {
+  const {user}=route.params;
   const { orderDetail, Token } = route.params;
   const [isloading, setIsloading] = useState(false);
   const [label, setLabel] = useState("Loading..");
@@ -225,7 +226,7 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
         <View style={styles.emptyView}></View>
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <View>
+        {/* <View>
           <DropDownPicker
             style={{ width: 200 }}
             open={open}
@@ -241,12 +242,13 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
             }}
             labelStyle={{ color: colors.muted }}
           />
-        </View>
+        </View> */}
         <View>
           {statusDisable == false ? (
             <CustomButton
-              text={"Update"}
-              onPress={() => handleUpdateStatus(orderDetail?._id)}
+              text={"Send Order to Rider"}
+              // onPress={() => handleUpdateStatus(orderDetail?._id)}
+              onPress={() => navigation.navigate("SellerSendtoRiderScreen", { authUser: user })}
             />
           ) : (
             <CustomButton text={"Update"} disabled />
@@ -368,8 +370,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-
+    justifyContent: "center",
+    alignContent:'center',
     paddingLeft: 10,
     paddingRight: 10,
   },

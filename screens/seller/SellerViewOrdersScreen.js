@@ -47,9 +47,10 @@ const SellerViewOrdersScreen = ({ navigation, route }) => {
 
   //method to navigate to order detail screen of specific order
   const handleOrderDetail = (item) => {
-    navigation.navigate("vieworderdetails", {
+    navigation.navigate("SellerViewOrderDetailScreen", {
       orderDetail: item,
       Token: getToken(authUser),
+      user:authUser
     });
   };
 

@@ -27,6 +27,11 @@ const Splash = ({ navigation }) => {
             navigation.replace("tab", { user: JSON.parse(value) }); // navigate to User Home screen
           }, 2000);
         }
+        if (user.userType === "RIDER") {
+          setTimeout(() => {
+            navigation.replace("RiderDashboardScreen", { authUser: JSON.parse(value)}); // navigate to User Home screen
+          }, 2000);
+        }
         // else {
         //   setTimeout(() => {
         //     navigation.replace("tab", { user: JSON.parse(value) }); // navigate to User Home screen
