@@ -7,7 +7,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const RiderList = ({ username, email, onPress }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.leftside}>
         <View style={styles.profileContainer}>
           <Ionicons
             name="person-circle-outline"
@@ -18,13 +17,7 @@ const RiderList = ({ username, email, onPress }) => {
         <View style={styles.userInfoContainer}>
           <Text style={styles.usernameText}>{username}</Text>
           <Text style={styles.userEmailText}>{email}</Text>
-        </View>
       </View>
-      <View>
-          <TouchableOpacity style={styles.actionButton} onPress={onPress}>
-            <Text style={{ color: colors.white }}>Send</Text>
-          </TouchableOpacity>
-        </View>
     </View>
   );
 };
@@ -33,14 +26,13 @@ export default RiderList;
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: colors.white,
     height: 70,
     borderRadius: 10,
-    elevation: 2,
+  
     marginLeft: 10,
     marginRight: 10,
     margin: 5,

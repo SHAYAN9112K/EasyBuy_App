@@ -248,7 +248,7 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
             <CustomButton
               text={"Send Order to Rider"}
               // onPress={() => handleUpdateStatus(orderDetail?._id)}
-              onPress={() => navigation.navigate("SellerSendtoRiderScreen", { authUser: user })}
+              onPress={() => navigation.navigate("SellerSendtoRiderScreen", { authUser: user,orderDetail:orderDetail })}
             />
           ) : (
             <CustomButton text={"Update"} disabled />
