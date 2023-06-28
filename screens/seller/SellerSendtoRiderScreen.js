@@ -125,10 +125,10 @@ import {
         </View>
         <View style={styles.screenNameContainer}>
           <View>
-            <Text style={styles.screenNameText}>View Users</Text>
+            <Text style={styles.screenNameText}>View Riders</Text>
           </View>
           <View>
-            <Text style={styles.screenNameParagraph}>View all Users</Text>
+            <Text style={styles.screenNameParagraph}>View all riders</Text>
           </View>
         </View>
         <CustomAlert message={error} type={alertType} />
@@ -154,6 +154,7 @@ import {
                 username={item?.name}
                 email={item?.email}
                 usertype={item?.userType}
+                onPress={()=>{}}
               />
             ))
           )}

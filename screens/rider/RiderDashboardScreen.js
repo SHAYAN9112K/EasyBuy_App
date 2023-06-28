@@ -12,11 +12,14 @@ import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "../../constants";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import CustomInput from "../../components/CustomInput";
 import CustomCard from "../../components/CustomCard/CustomCard";
 import OptionList from "../../components/OptionList/OptionList";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProgressDialog from "react-native-progress-dialog";
+import OrderList from "../../components/OrderList/OrderList";
 
 const RiderDashboardScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
@@ -26,6 +29,10 @@ const RiderDashboardScreen = ({ navigation, route }) => {
   const [isloading, setIsloading] = useState(false);
   const [data, setData] = useState([]);
   const [refeshing, setRefreshing] = useState(false);
+  const [alertType, setAlertType] = useState("error");
+  const [orders, setOrders] = useState([]);
+  const [foundItems, setFoundItems] = useState([]);
+  const [filterItem, setFilterItem] = useState("");
 
   //method to remove the auth user from async storage and navigate the login if token expires
   const logout = async () => {
@@ -33,73 +40,22 @@ const RiderDashboardScreen = ({ navigation, route }) => {
     navigation.replace("drawers");
   };
 
-  var myHeaders = new Headers();
-  myHeaders.append("x-auth-token", authUser.token);
-
-  var requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
+  const handleOrderDetail = (item) => {
+    navigation.navigate("SellerViewOrderDetailScreen", {
+      orderDetail: item,
+      Token: getToken(authUser),
+      user:authUser
+    });
   };
 
-  //method the fetch the statistics from server using API call
-  const fetchStats = () => {
-    // fetch(`${network.serverip}/dashboard`, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((result) => {
-    //     if (result.success == true) {
-    //       //set the fetched data to Data state
-    //       setData([
-    //         {
-    //           id: 1,
-    //           title: "Users",
-    //           value: result.data?.usersCount,
-    //           iconName: "person",
-    //           type: "parimary",
-    //           screenName: "viewusers",
-    //         },
-    //         {
-    //           id: 2,
-    //           title: "Orders",
-    //           value: result.data?.ordersCount,
-    //           iconName: "cart",
-    //           type: "secondary",
-    //           screenName: "vieworder",
-    //         },
-    //         {
-    //           id: 3,
-    //           title: "Products",
-    //           value: result.data?.productsCount,
-    //           iconName: "md-square",
-    //           type: "warning",
-    //           screenName: "viewproduct",
-    //         },
-    //         {
-    //           id: 4,
-    //           title: "Categories",
-    //           value: result.data?.categoriesCount,
-    //           iconName: "menu",
-    //           type: "muted",
-    //           screenName: "viewcategories",
-    //         },
-    //       ]);
-    //       setError("");
-    //       setIsloading(false);
-    //     } else {
-    //       console.log(result.err);
-    //       if (result.err == "jwt expired") {
-    //         logout();
-    //       }
-    //       setError(result.message);
-    //       setIsloading(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     setError(error.message);
-    //     console.log("error", error);
-    //     setIsloading(false);
-    //   });
-  };
+  // var myHeaders = new Headers();
+  // myHeaders.append("x-auth-token", authUser.token);
+
+  // var requestOptions = {
+  //   method: "GET",
+  //   headers: myHeaders,
+  //   redirect: "follow",
+  // };
 
   //method call on Pull refresh
   const handleOnRefresh = () => {
@@ -108,9 +64,66 @@ const RiderDashboardScreen = ({ navigation, route }) => {
     setRefreshing(false);
   };
 
-  //call the fetch function initial render
+  const getToken = (obj) => {
+    try {
+      setUser(JSON.parse(obj));
+    } catch (e) {
+      setUser(obj);
+      return obj.token;
+    }
+    return JSON.parse(obj).token;
+  };
+
+  //method the fetch the order data from server using API call
+  const fetchOrders = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("x-auth-token", getToken(authUser));
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    setIsloading(true);
+    fetch(`${network.serverip}/rider/getMyOrders/${authUser.email}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          setOrders(result.data);
+          setFoundItems(result.data);
+          setError("");
+        } else {
+          setError(result.message);
+        }
+        setIsloading(false);
+      })
+      .catch((error) => {
+        setIsloading(false);
+        setError(error.message);
+        console.log("error", error);
+      });
+  };
+
+  //method to filer the orders for by title [search bar]
+  const filter = () => {
+    const keyword = filterItem;
+    if (keyword !== "") {
+      const results = orders?.filter((item) => {
+        return item?.orderId.toLowerCase().includes(keyword.toLowerCase());
+      });
+      setFoundItems(results);
+    } else {
+      setFoundItems(orders);
+    }
+  };
+  //filter the data whenever filteritem value change
   useEffect(() => {
-    fetchStats();
+    filter();
+  }, [filterItem]);
+
+  //fetch the orders on initial render
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
   return (
@@ -153,84 +166,41 @@ const RiderDashboardScreen = ({ navigation, route }) => {
           <MaterialCommunityIcons name="menu-right" size={30} color="black" />
           <Text style={styles.headingText}>Welcome, {authUser.email}</Text>
         </View>
-        <View style={{ height: 370 }}>
-          {data && (
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refeshing}
-                  onRefresh={handleOnRefresh}
-                />
-              }
-              contentContainerStyle={styles.cardContainer}
-            >
-              {data.map((data) => (
-                <CustomCard
-                  key={data.id}
-                  iconName={data.iconName}
-                  title={data.title}
-                  value={data.value}
-                  type={data.type}
-                  onPress={() => {
-                    navigation.navigate(data.screenName, { authUser: user });
-                  }}
-                />
-              ))}
-            </ScrollView>
-          )}
+        <View style={styles.screenNameContainer}>
+        <View>
+          <Text style={styles.screenNameText}>Order</Text>
         </View>
-        {/* <View style={styles.headingContainer}>
-          <MaterialCommunityIcons name="menu-right" size={30} color="black" />
-          <Text style={styles.headingText}>Actions</Text>
-        </View> */}
-        {/* <View style={{ flex: 1, width: "100%" }}>
-          <ScrollView style={styles.actionContainer}>
-            <OptionList
-              text={"Products"}
-              Icon={Ionicons}
-              iconName={"md-square"}
-              onPress={() =>
-                navigation.navigate("viewproduct", { authUser: user })
-              }
-              onPressSecondary={() =>
-                navigation.navigate("addproduct", { authUser: user })
-              }
-              type="morden"
-            />
-            <OptionList
-              text={"Categories"}
-              Icon={Ionicons}
-              iconName={"menu"}
-              onPress={() =>
-                navigation.navigate("viewcategories", { authUser: user })
-              }
-              onPressSecondary={() =>
-                navigation.navigate("addcategories", { authUser: user })
-              }
-              type="morden"
-            />
-            <OptionList
-              text={"Orders"}
-              Icon={Ionicons}
-              iconName={"cart"}
-              onPress={() =>
-                navigation.navigate("vieworder", { authUser: user })
-              }
-              type="morden"
-            />
-            <OptionList
-              text={"Users"}
-              Icon={Ionicons}
-              iconName={"person"}
-              onPress={() =>
-                navigation.navigate("viewusers", { authUser: user })
-              }
-              type="morden"
-            />
-
-            <View style={{ height: 20 }}></View>
-          </ScrollView>
-        </View> */}
+       
+      </View>
+      <CustomAlert message={error} type={alertType} />
+      <CustomInput
+        radius={5}
+        placeholder={"Search..."}
+        value={filterItem}
+        setValue={setFilterItem}
+      />
+      <ScrollView
+        style={{ flex: 1, width: "100%", padding: 2 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refeshing} onRefresh={handleOnRefresh} />
+        }
+      >
+        {foundItems && foundItems.length == 0 ? (
+          <Text>{`No order found `}</Text>
+        ) : (
+          foundItems.map((order, index) => {
+            return (
+              <OrderList
+                item={order}
+                key={index}
+                onPress={() => handleOrderDetail(order)}
+              />
+            );
+          })
+        )}
+      </ScrollView>
+        
       </View>
     </InternetConnectionAlert>
   );
@@ -247,6 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingBottom: 0,
     flex: 1,
+    marginHorizontal:4
   },
   topBarContainer: {
     width: "100%",
@@ -254,7 +225,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 20,
+    padding: 10,
   },
   toBarText: {
     fontSize: 15,
@@ -272,7 +243,7 @@ const styles = StyleSheet.create({
   headingContainer: {
     display: "flex",
     justifyContent: "flex-start",
-    paddingLeft: 10,
+    paddingLeft: 2,
     width: "100%",
     alignItems: "center",
     flexDirection: "row",
@@ -283,4 +254,49 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   actionContainer: { padding: 20, width: "100%", flex: 1 },
+  TopBarContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  formContainer: {
+    flex: 2,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    display: "flex",
+    width: "100%",
+    flexDirecion: "row",
+    padding: 5,
+  },
+
+  buttomContainer: {
+    width: "100%",
+  },
+  bottomContainer: {
+    marginTop: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  screenNameContainer: {
+    marginTop: 10,
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    
+  },
+  screenNameText: {
+    fontSize: 30,
+    fontWeight: "800",
+    color: colors.muted,
+    marginHorizontal:10
+  },
+  screenNameParagraph: {
+    marginTop: 5,
+    fontSize: 15,
+  },
 });
