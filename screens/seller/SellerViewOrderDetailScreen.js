@@ -33,6 +33,8 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
     { label: "Delivered", value: "delivered" },
   ]);
 
+  const [btnlbl, setBtnlbl] = useState("oder Sent to Rider");
+
   //method to convert the time into AM PM format
   function tConvert(time) {
     time = time
@@ -102,7 +104,17 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
   useEffect(() => {
     setError("");
     setAlertType("error");
-    if (orderDetail?.status == "delivered") {
+
+    if (orderDetail?.status == "delivered"){
+      setBtnlbl("Order Delivered")
+    }
+    if (orderDetail?.status == "Sent To Rider"){
+      setBtnlbl("Order Sent To Rider")
+    }
+    if (orderDetail?.status == "Shipped"){
+      setBtnlbl("Order Shipped")
+    }
+    if (orderDetail?.status != "pending") {
       setStatusDisable(true);
     } else {
       setStatusDisable(false);
@@ -120,6 +132,7 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
         return (accumulator + object.price) * object.quantity;
       }, 0) // calculate the total cost
     );
+   
   }, []);
   return (
     <View style={styles.container}>
@@ -251,7 +264,7 @@ const SellerViewOrderDetailScreen = ({ navigation, route }) => {
               onPress={() => navigation.navigate("SellerSendtoRiderScreen", { authUser: user,orderDetail:orderDetail })}
             />
           ) : (
-            <CustomButton text={"Update"} disabled />
+            <CustomButton text={btnlbl} disabled />
           )}
         </View>
       </View>

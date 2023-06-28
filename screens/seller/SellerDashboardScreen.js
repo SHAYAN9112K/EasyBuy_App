@@ -58,14 +58,34 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               iconName: "md-square",
               type: "warning",
               screenName: "SellerViewProductScreen",
+              status:"all"
             },
             {
               id: 2,
-              title: "Orders",
-              value: result.data?.ordersCount,
+              title: "Pending Orders",
+              value: result.data?.PendingOrdersCount,
               iconName: "cart",
               type: "secondary",
               screenName: "SellerViewOrdersScreen",
+              status:"pending"
+            },
+            {
+              id: 3,
+              title: "Orders In Progress",
+              value: result.data?.ProgressOrdersCount,
+              iconName: "cart",
+              type: "secondary",
+              screenName: "SellerViewOrdersScreen",
+              status:"progress"
+            },
+            {
+              id: 4,
+              title: "Delivered",
+              value: result.data?.DeliveredOrdersCount,
+              iconName: "cart",
+              type: "secondary",
+              screenName: "SellerViewOrdersScreen",
+              status:"delivered"
             },
           ]);
           setError("");
@@ -146,7 +166,7 @@ const SellerDashboardScreen = ({ navigation, route }) => {
                   value={data.value}
                   type={data.type}
                   onPress={() => {
-                    navigation.navigate(data.screenName, { authUser: user });
+                    navigation.navigate(data.screenName, { authUser: user , status:data.status});
                   }}
                 />
               ))}
@@ -176,7 +196,7 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               Icon={Ionicons}
               iconName={"cart"}
               onPress={() =>
-                navigation.navigate("SellerViewOrdersScreen", { authUser: user })
+                navigation.navigate("SellerViewOrdersScreen", { authUser: user ,status:"all" })
               }
               type="morden"
             />

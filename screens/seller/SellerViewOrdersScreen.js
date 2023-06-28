@@ -16,7 +16,7 @@ import ProgressDialog from "react-native-progress-dialog";
 import OrderList from "../../components/OrderList/OrderList";
 
 const SellerViewOrdersScreen = ({ navigation, route }) => {
-  const { authUser } = route.params;
+  const { authUser,status } = route.params;
   const [user, setUser] = useState({});
   const [isloading, setIsloading] = useState(false);
   const [refeshing, setRefreshing] = useState(false);
@@ -70,8 +70,34 @@ const SellerViewOrdersScreen = ({ navigation, route }) => {
       .then((result) => {
         if (result.success) {
           setOrders(result.data);
-          setFoundItems(result.data);
+          // setFoundItems(result.data);
           setError("");
+
+          var templist=[];
+          result.data.forEach(element => {
+            if(status=="pending"){
+
+              if(element.status=="pending"){
+                templist.push(element);
+              }
+              
+            }
+            if(status=="all"){
+              templist.push(element);
+            }
+            if(status=="progress"){
+              if(element.status=="Shipped" || element.status=="Sent To Rider"){
+                templist.push(element);
+              }
+            }
+            if(status=="delivered"){
+              if(element.status=="delivered"){
+                templist.push(element);
+              }
+            }
+          });
+
+          setFoundItems(templist);
         } else {
           setError(result.message);
         }

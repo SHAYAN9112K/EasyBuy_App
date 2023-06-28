@@ -168,7 +168,7 @@ const RiderDashboardScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameText}>Order</Text>
+          <Text style={styles.screenNameText}>Orders</Text>
         </View>
        
       </View>
