@@ -17,6 +17,12 @@ import OrderConfirmScreen from "../screens/user/OrderConfirmScreen";
 import ProductDetailScreen from "../screens/user/ProductDetailScreen";
 import EditProductScreen from "../screens/admin/EditProductScreen";
 import ViewOrdersScreen from "../screens/admin/ViewOrdersScreen";
+import SellerDashboardScreen from "../screens/seller/SellerDashboardScreen";
+import SellerAddProductScreen from "../screens/seller/SellerAddProductScreen";
+import SellerViewOrdersScreen from "../screens/seller/SellerViewOrdersScreen";
+import SellerViewProductScreen from "../screens/seller/SellerViewProductScreen";
+import SellerEditProductScreen from "../screens/seller/SellerEditProductScreen";
+import SellerViewOrderDetailScreen from "../screens/seller/SellerViewOrderDetailScreen";
 import ViewOrderDetailScreen from "../screens/admin/ViewOrderDetailScreen";
 import MyOrderScreen from "../screens/user/MyOrderScreen";
 import MyOrderDetailScreen from "../screens/user/MyOrderDetailScreen";
@@ -44,6 +50,12 @@ const Routes = () => {
         <Stack.Screen name="myaccount" component={MyAccountScreen} />
         <Stack.Screen name="mywishlist" component={MyWishlistScreen} />
         <Stack.Screen name="dashboard" component={DashboardScreen} />
+        <Stack.Screen name="SellerDashboardScreen" component={SellerDashboardScreen} />
+        <Stack.Screen name="SellerViewOrdersScreen" component={SellerViewOrdersScreen} />
+        <Stack.Screen name="SellerViewOrderDetailScreen" component={SellerViewOrderDetailScreen} />
+        <Stack.Screen name="SellerEditProductScreen" component={SellerEditProductScreen} />
+        <Stack.Screen name="SellerAddProductScreen" component={SellerAddProductScreen} />
+        <Stack.Screen name="SellerViewProductScreen" component={SellerViewProductScreen} />
         <Stack.Screen name="addproduct" component={AddProductScreen} />
         <Stack.Screen name="viewproduct" component={ViewProductScreen} />
         <Stack.Screen name="editproduct" component={EditProductScreen} />
@@ -54,10 +66,7 @@ const Routes = () => {
         <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} />
         <Stack.Screen name="productdetail" component={ProductDetailScreen} />
         <Stack.Screen name="vieworder" component={ViewOrdersScreen} />
-        <Stack.Screen
-          name="vieworderdetails"
-          component={ViewOrderDetailScreen}
-        />
+        <Stack.Screen name="vieworderdetails" component={ViewOrderDetailScreen} />
         <Stack.Screen name="myorder" component={MyOrderScreen} />
         <Stack.Screen name="myorderdetail" component={MyOrderDetailScreen} />
         <Stack.Screen name="viewcategories" component={ViewCategoryScreen} />

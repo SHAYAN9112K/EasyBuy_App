@@ -32,7 +32,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
   //remove the authUser from async storage and navigate to login
   const logout = async () => {
     await AsyncStorage.removeItem("authUser");
-    navigation.replace("login");
+    navigation.replace("drawers");
   };
 
   const [onWishlist, setOnWishlist] = useState(false);
@@ -182,7 +182,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
   useEffect(() => {
     setQuantity(0);
     setAvaiableQuantity(product.quantity);
-    SetProductImage(`${network.serverip}/uploads/${product?.image}`);
+    SetProductImage(`${product?.image}`);
     fetchWishlist();
   }, []);
 
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     elevation: 25,
   },
   productImage: {
-    height: 300,
+    height: 270,
     width: 300,
     resizeMode: "contain",
   },

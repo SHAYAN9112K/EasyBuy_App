@@ -37,7 +37,7 @@ const CheckoutScreen = ({ navigation, route }) => {
   //method to remove the authUser from aysnc storage and navigate to login
   const logout = async () => {
     await AsyncStorage.removeItem("authUser");
-    navigation.replace("login");
+    navigation.replace("drawers");
   };
 
   //method to handle checkout

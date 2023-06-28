@@ -15,7 +15,7 @@ import BasicProductList from "../../components/BasicProductList/BasicProductList
 import CustomButton from "../../components/CustomButton";
 import DropDownPicker from "react-native-dropdown-picker";
 
-const ViewOrderDetailScreen = ({ navigation, route }) => {
+const SellerViewOrderDetailScreen = ({ navigation, route }) => {
   const { orderDetail, Token } = route.params;
   const [isloading, setIsloading] = useState(false);
   const [label, setLabel] = useState("Loading..");
@@ -257,7 +257,7 @@ const ViewOrderDetailScreen = ({ navigation, route }) => {
   );
 };
 
-export default ViewOrderDetailScreen;
+export default SellerViewOrderDetailScreen;
 
 const styles = StyleSheet.create({
   container: {

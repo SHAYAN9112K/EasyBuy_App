@@ -107,11 +107,11 @@ const LoginScreen = ({ navigation }) => {
           if (result?.data?.userType == "SELLER") {
             _storeData(result.data);
             setIsloading(false);
-            navigation.replace("tab", { user: result.data }); // naviagte to User Dashboard
+            navigation.replace("SellerDashboardScreen", { authUser: result.data });
           }
         } else {
           setIsloading(false);
-          return setError(result.message);
+          return setError("sdsds"+result.message);
         }
       })
       .catch((error) => {

@@ -27,7 +27,7 @@ const SignupScreen = ({ navigation }) => {
   const [error, setError] = useState("");
   const [passShow, setPassShow] = useState(true);
   const [passShow1, setPassShow1] = useState(true);
-  const [category, setCategory] = useState("");
+  const [selectedUserType, setSelectedUserType] = useState("");
   const [open, setOpen] = useState(false);
   const [statusDisable, setStatusDisable] = useState(false);
   const [items, setItems] = useState([
@@ -43,7 +43,7 @@ const SignupScreen = ({ navigation }) => {
     email: email,
     password: password,
     name: name,
-    userType: "USER",
+    userType: selectedUserType,
   });
 
   var requestOptions = {
@@ -55,6 +55,9 @@ const SignupScreen = ({ navigation }) => {
 
   //method to post the user data to server for user signup using API call
   const signUpHandle = () => {
+    if (selectedUserType == "") {
+      return setError("Please Select User Type");
+    }
     if (email == "") {
       return setError("Please enter your email");
     }
@@ -81,7 +84,7 @@ const SignupScreen = ({ navigation }) => {
       .then((result) => {
         console.log(result);
         if (result.data["email"] == email) {
-          navigation.navigate("login");
+          navigation.navigate("drawers");
         }
       })
       .catch((error) => console.log("error", setError(error.message)));
@@ -127,10 +130,10 @@ const SignupScreen = ({ navigation }) => {
             <DropDownPicker
               placeholder={"Select User Type"}
               open={open}
-              value={category}
+              value={selectedUserType}
               items={items}
               setOpen={setOpen}
-              setValue={setCategory}
+              setValue={setSelectedUserType}
               setItems={setItems}
               disabled={statusDisable}
               disabledStyle={{
@@ -201,7 +204,7 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.bottomContainer}>
           <Text>Already have an account?</Text>
           <Text
-            onPress={() => navigation.navigate("login")}
+            onPress={() => navigation.navigate("drawers")}
             style={styles.signupText}
           >
             Login

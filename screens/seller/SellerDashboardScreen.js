@@ -18,7 +18,7 @@ import InternetConnectionAlert from "react-native-internet-connection-alert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProgressDialog from "react-native-progress-dialog";
 
-const DashboardScreen = ({ navigation, route }) => {
+const SellerDashboardScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
   const [user, setUser] = useState(authUser);
   const [label, setLabel] = useState("Loading...");
@@ -30,7 +30,7 @@ const DashboardScreen = ({ navigation, route }) => {
   //method to remove the auth user from async storage and navigate the login if token expires
   const logout = async () => {
     await AsyncStorage.removeItem("authUser");
-    navigation.replace("login");
+    navigation.replace("drawers");
   };
 
   var myHeaders = new Headers();
@@ -44,19 +44,20 @@ const DashboardScreen = ({ navigation, route }) => {
 
   //method the fetch the statistics from server using API call
   const fetchStats = () => {
-    fetch(`${network.serverip}/dashboard`, requestOptions)
+    fetch(`${network.serverip}/sellerdashboard/${authUser.email}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success == true) {
+          console.log("testingss: "+result)
           //set the fetched data to Data state
           setData([
             {
               id: 1,
-              title: "Users",
-              value: result.data?.usersCount,
-              iconName: "person",
-              type: "parimary",
-              screenName: "viewusers",
+              title: "Products",
+              value: result.data?.productsCount,
+              iconName: "md-square",
+              type: "warning",
+              screenName: "SellerViewProductScreen",
             },
             {
               id: 2,
@@ -64,23 +65,7 @@ const DashboardScreen = ({ navigation, route }) => {
               value: result.data?.ordersCount,
               iconName: "cart",
               type: "secondary",
-              screenName: "vieworder",
-            },
-            {
-              id: 3,
-              title: "Products",
-              value: result.data?.productsCount,
-              iconName: "md-square",
-              type: "warning",
-              screenName: "viewproduct",
-            },
-            {
-              id: 4,
-              title: "Categories",
-              value: result.data?.categoriesCount,
-              iconName: "menu",
-              type: "muted",
-              screenName: "viewcategories",
+              screenName: "SellerViewOrdersScreen",
             },
           ]);
           setError("");
@@ -122,7 +107,7 @@ const DashboardScreen = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={async () => {
               await AsyncStorage.removeItem("authUser");
-              navigation.replace("login");
+              navigation.replace("drawers");
             }}
           >
             <Ionicons name="log-out" size={30} color={colors.muted} />
@@ -140,7 +125,7 @@ const DashboardScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.headingContainer}>
           <MaterialCommunityIcons name="menu-right" size={30} color="black" />
-          <Text style={styles.headingText}>Welcome, Admin</Text>
+          <Text style={styles.headingText}>Welcome, Seller</Text>
         </View>
         <View style={{ height: 370 }}>
           {data && (
@@ -179,22 +164,10 @@ const DashboardScreen = ({ navigation, route }) => {
               Icon={Ionicons}
               iconName={"md-square"}
               onPress={() =>
-                navigation.navigate("viewproduct", { authUser: user })
+                navigation.navigate("SellerViewProductScreen", { authUser: user })
               }
               onPressSecondary={() =>
-                navigation.navigate("addproduct", { authUser: user })
-              }
-              type="morden"
-            />
-            <OptionList
-              text={"Categories"}
-              Icon={Ionicons}
-              iconName={"menu"}
-              onPress={() =>
-                navigation.navigate("viewcategories", { authUser: user })
-              }
-              onPressSecondary={() =>
-                navigation.navigate("addcategories", { authUser: user })
+                navigation.navigate("SellerAddProductScreen", { authUser: user })
               }
               type="morden"
             />
@@ -203,16 +176,7 @@ const DashboardScreen = ({ navigation, route }) => {
               Icon={Ionicons}
               iconName={"cart"}
               onPress={() =>
-                navigation.navigate("vieworder", { authUser: user })
-              }
-              type="morden"
-            />
-            <OptionList
-              text={"Users"}
-              Icon={Ionicons}
-              iconName={"person"}
-              onPress={() =>
-                navigation.navigate("viewusers", { authUser: user })
+                navigation.navigate("SellerViewOrdersScreen", { authUser: user })
               }
               type="morden"
             />
@@ -225,7 +189,7 @@ const DashboardScreen = ({ navigation, route }) => {
   );
 };
 
-export default DashboardScreen;
+export default SellerDashboardScreen;
 
 const styles = StyleSheet.create({
   container: {

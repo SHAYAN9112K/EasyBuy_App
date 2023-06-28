@@ -30,7 +30,7 @@ const DashboardScreen = ({ navigation, route }) => {
   //method to remove the auth user from async storage and navigate the login if token expires
   const logout = async () => {
     await AsyncStorage.removeItem("authUser");
-    navigation.replace("login");
+    navigation.replace("drawers");
   };
 
   var myHeaders = new Headers();

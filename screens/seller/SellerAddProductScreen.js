@@ -20,7 +20,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 
-const AddProductScreen = ({ navigation, route }) => {
+const SellerAddProductScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
   const [isloading, setIsloading] = useState(false);
   const [title, setTitle] = useState("");
@@ -127,6 +127,7 @@ const AddProductScreen = ({ navigation, route }) => {
     description: description,
     category: category,
     quantity: quantity,
+    sellerEmail:authUser.email
   });
 
   var requestOptions = {
@@ -306,7 +307,7 @@ const AddProductScreen = ({ navigation, route }) => {
   );
 };
 
-export default AddProductScreen;
+export default SellerAddProductScreen;
 
 const styles = StyleSheet.create({
   container: {

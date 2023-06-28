@@ -16,11 +16,22 @@ const Splash = ({ navigation }) => {
           setTimeout(() => {
             navigation.replace("dashboard", { authUser: JSON.parse(value) }); // navigate to Admin dashboard
           }, 2000);
-        } else {
+        }
+        if (user.userType === "SELLER") {
+          setTimeout(() => {
+            navigation.replace("SellerDashboardScreen", { authUser: JSON.parse(value) }); // navigate to Admin dashboard
+          }, 2000);
+        }
+        if (user.userType === "USER") {
           setTimeout(() => {
             navigation.replace("tab", { user: JSON.parse(value) }); // navigate to User Home screen
           }, 2000);
         }
+        // else {
+        //   setTimeout(() => {
+        //     navigation.replace("tab", { user: JSON.parse(value) }); // navigate to User Home screen
+        //   }, 2000);
+        // }
       } else {
         setTimeout(() => {
           navigation.replace("drawers"); // // navigate to login screen if there is no authUser store in aysnc storage

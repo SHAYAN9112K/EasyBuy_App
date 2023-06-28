@@ -65,6 +65,53 @@ const HomeScreen = ({ navigation, route }) => {
   const [userInfo, setUserInfo] = useState({});
   const [searchItems, setSearchItems] = useState([]);
 
+
+  const [categories, setCategories] = useState([]);
+  
+  const [items, setItems] = useState([
+    { label: "Category", value: "pending" },
+    { label: "Category", value: "shipped" },
+    { label: "Category", value: "delivered" },
+  ]);
+
+  var payload = [];
+
+  //Method : Fetch category data from using API call and store for later you in code
+  const fetchCategories = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("x-auth-token");
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    fetch(`${network.serverip}/categories`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          setCategories(result.categories);
+          result.categories.forEach((cat) => {
+            let obj = {
+              label: cat.title,
+              value: cat._id,
+            };
+            payload.push(obj);
+          });
+          setItems(payload);
+          setError("");
+        } else {
+          setError(result.message);
+        }
+        
+      })
+      .catch((error) => {
+        
+        setError(error.message);
+        console.log("error", error);
+      });
+  };
+
   //method to convert the authUser to json object
   const convertToJSON = (obj) => {
     try {
@@ -123,6 +170,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     convertToJSON(user);
     fetchProduct();
+    fetchCategories();
   }, []);
 
   return (
@@ -219,13 +267,13 @@ const HomeScreen = ({ navigation, route }) => {
               showsHorizontalScrollIndicator={false}
               style={styles.flatListContainer}
               horizontal={true}
-              data={category}
+              data={items}
               keyExtractor={(item, index) => `${item}-${index}`}
               renderItem={({ item, index }) => (
                 <View style={{ marginBottom: 10 }} key={index}>
                   <CustomIconButton
                     key={index}
-                    text={item.title}
+                    text={item.label}
                     image={item.image}
                     onPress={() =>
                       navigation.jumpTo("categories", { categoryID: item })
@@ -254,10 +302,11 @@ const HomeScreen = ({ navigation, route }) => {
                     onRefresh={handleOnRefresh}
                   />
                 }
+                inverted={true}
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
                 horizontal={true}
-                data={products.slice(0, 4)}
+                data={products.slice(products.length-4)}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item, index }) => (
                   <View
@@ -266,7 +315,7 @@ const HomeScreen = ({ navigation, route }) => {
                   >
                     <ProductCard
                       name={item.title}
-                      image={`${network.serverip}/uploads/${item.image}`}
+                      image={`${item.image}`}
                       price={item.price}
                       quantity={item.quantity}
                       onPress={() => handleProductPress(item)}

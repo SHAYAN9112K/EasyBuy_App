@@ -25,6 +25,7 @@ import CustomInput from "../../components/CustomInput";
 const CategoriesScreen = ({ navigation, route }) => {
   const { categoryID } = route.params;
 
+
   const [isLoading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [refeshing, setRefreshing] = useState(false);
@@ -32,6 +33,52 @@ const CategoriesScreen = ({ navigation, route }) => {
   const [error, setError] = useState("");
   const [foundItems, setFoundItems] = useState([]);
   const [filterItem, setFilterItem] = useState("");
+
+  const [categories, setCategories] = useState([]);
+  
+  const [items, setItems] = useState([
+    { label: "Category", value: "pending" },
+    { label: "Category", value: "shipped" },
+    { label: "Category", value: "delivered" },
+  ]);
+
+  var payload = [];
+
+  //Method : Fetch category data from using API call and store for later you in code
+  const fetchCategories = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("x-auth-token");
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    fetch(`${network.serverip}/categories`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          setCategories(result.categories);
+          result.categories.forEach((cat) => {
+            let obj = {
+              label: cat.title,
+              value: cat._id,
+            };
+            payload.push(obj);
+          });
+          setItems(payload);
+          setError("");
+        } else {
+          setError(result.message);
+        }
+        
+      })
+      .catch((error) => {
+        
+        setError(error.message);
+        console.log("error", error);
+      });
+  };
 
   //get the dimenssions of active window
   const [windowWidth, setWindowWidth] = useState(
@@ -142,6 +189,7 @@ const CategoriesScreen = ({ navigation, route }) => {
   //fetch the product on initial render
   useEffect(() => {
     fetchProduct();
+    fetchCategories();
   }, []);
 
   return (
@@ -185,7 +233,7 @@ const CategoriesScreen = ({ navigation, route }) => {
           />
         </View>
         <FlatList
-          data={category}
+          data={items}
           keyExtractor={(index, item) => `${index}-${item}`}
           horizontal
           style={{ flexGrow: 0 }}
@@ -194,9 +242,9 @@ const CategoriesScreen = ({ navigation, route }) => {
           renderItem={({ item: tab }) => (
             <CustomIconButton
               key={tab}
-              text={tab.title}
+              text={tab.label}
               image={tab.image}
-              active={selectedTab?.title === tab.title ? true : false}
+              active={selectedTab?.label === tab.label ? true : false}
               onPress={() => {
                 setSelectedTab(tab);
               }}

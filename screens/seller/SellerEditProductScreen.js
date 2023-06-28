@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { colors, network } from "../../constants";
 import CustomInput from "../../components/CustomInput";
 import CustomButton from "../../components/CustomButton";
@@ -18,84 +18,111 @@ import * as ImagePicker from "expo-image-picker";
 import ProgressDialog from "react-native-progress-dialog";
 import { AntDesign } from "@expo/vector-icons";
 
-const AddCategoryScreen = ({ navigation, route }) => {
-  const { authUser } = route.params; //authUser data
+const SellerEditProductScreen = ({ navigation, route }) => {
+  const { product, authUser } = route.params;
   const [isloading, setIsloading] = useState(false);
+  const [label, setLabel] = useState("Updating...");
   const [title, setTitle] = useState("");
-  const [image, setImage] = useState("easybuycat.png");
-  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [sku, setSku] = useState("");
+  const [image, setImage] = useState("");
   const [error, setError] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("garments");
   const [alertType, setAlertType] = useState("error");
-  const [user, setUser] = useState({});
 
-  //method to convert the authUser to json object.
-  const getToken = (obj) => {
-    try {
-      setUser(JSON.parse(obj));
-    } catch (e) {
-      setUser(obj);
-      return obj.token;
-    }
-    return JSON.parse(obj).token;
+  var myHeaders = new Headers();
+  myHeaders.append("x-auth-token", authUser.token);
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    title: title,
+    sku: sku,
+    price: price,
+    image: image,
+    description: description,
+    category: product.category,
+    quantity: quantity,
+    sellerEmail:authUser.email
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
   };
 
-  //Method for imput validation post data to server to insert category using API call
-  const addCategoryHandle = () => {
-    var myHeaders = new Headers();
-    myHeaders.append("x-auth-token", authUser.token);
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-      title: title,
-      image: image,
-      description: description,
+  //Method for selecting the image from device gallery
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
     });
+    console.log(result);
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
+  //Method for imput validation and post data to server to edit product using API call
+  const editProductHandle = () => {
     setIsloading(true);
-    //[check validation] -- Start
     if (title == "") {
       setError("Please enter the product title");
       setIsloading(false);
-    } else if (description == "") {
-      setError("Please upload the product image");
+    } else if (price == 0) {
+      setError("Please enter the product price");
+      setIsloading(false);
+    } else if (quantity <= 0) {
+      setError("Quantity must be greater then 1");
       setIsloading(false);
     } else if (image == null) {
-      setError("Please upload the Catergory image");
+      setError("Please upload the product image");
       setIsloading(false);
     } else {
-      //[check validation] -- End
-      fetch(network.serverip + "/category", requestOptions) //API call
+      console.log(`${network.serverip}"/update-product?id=${product._id}"`);
+      fetch(
+        `${network.serverip}/sellerUpdate-product?id=${product._id}`,
+        requestOptions
+      )
         .then((response) => response.json())
         .then((result) => {
-          console.log(result);
           if (result.success == true) {
             setIsloading(false);
-            setAlertType("success");
             setError(result.message);
+            setPrice("");
+            setQuantity("");
+            setSku("");
             setTitle("");
-            setDescription("");
           }
         })
         .catch((error) => {
           setIsloading(false);
           setError(error.message);
-          setAlertType("error");
-          console.log("error", error);
+          console.log("errorss", error);
         });
     }
   };
 
+  // set all the input fields and image on initial render
+  useEffect(() => {
+    setImage(`${product?.image}`);
+    setTitle(product.title);
+    setSku(product.sku);
+    setQuantity(product.quantity.toString());
+    setPrice(product.price.toString());
+    setDescription(product.description);
+  }, []);
+
   return (
     <KeyboardAvoidingView style={styles.container}>
       <StatusBar></StatusBar>
-      <ProgressDialog visible={isloading} label={"Adding ..."} />
+      <ProgressDialog visible={isloading} label={label} />
       <View style={styles.TopBarContainer}>
         <TouchableOpacity
           onPress={() => {
@@ -112,18 +139,36 @@ const AddCategoryScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameText}>Add Category</Text>
+          <Text style={styles.screenNameText}>Edit Product</Text>
         </View>
         <View>
-          <Text style={styles.screenNameParagraph}>Add category details</Text>
+          <Text style={styles.screenNameParagraph}>Edit product details</Text>
         </View>
       </View>
-      <CustomAlert message={error} type={alertType} />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{ flex: 1, width: "100%" }}
-      >
+      <CustomAlert message={error} type={"error"} />
+      <ScrollView style={{ flex: 1, width: "100%" }}>
         <View style={styles.formContainer}>
+          <View style={styles.imageContainer}>
+            {image ? (
+              <TouchableOpacity style={styles.imageHolder} onPress={pickImage}>
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 200, height: 200 }}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={styles.imageHolder} onPress={pickImage}>
+                <AntDesign name="pluscircle" size={50} color={colors.muted} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <CustomInput
+            value={sku}
+            setValue={setSku}
+            placeholder={"SKU"}
+            placeholderTextColor={colors.muted}
+            radius={5}
+          />
           <CustomInput
             value={title}
             setValue={setTitle}
@@ -131,7 +176,22 @@ const AddCategoryScreen = ({ navigation, route }) => {
             placeholderTextColor={colors.muted}
             radius={5}
           />
-
+          <CustomInput
+            value={price}
+            setValue={setPrice}
+            placeholder={"Price"}
+            keyboardType={"number-pad"}
+            placeholderTextColor={colors.muted}
+            radius={5}
+          />
+          <CustomInput
+            value={quantity}
+            setValue={setQuantity}
+            placeholder={"Quantity"}
+            keyboardType={"number-pad"}
+            placeholderTextColor={colors.muted}
+            radius={5}
+          />
           <CustomInput
             value={description}
             setValue={setDescription}
@@ -141,15 +201,14 @@ const AddCategoryScreen = ({ navigation, route }) => {
           />
         </View>
       </ScrollView>
-
       <View style={styles.buttomContainer}>
-        <CustomButton text={"Add Category"} onPress={addCategoryHandle} />
+        <CustomButton text={"Edit Product"} onPress={editProductHandle} />
       </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default AddCategoryScreen;
+export default SellerEditProductScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -178,7 +237,6 @@ const styles = StyleSheet.create({
   },
 
   buttomContainer: {
-    marginTop: 10,
     width: "100%",
   },
   bottomContainer: {

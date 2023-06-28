@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const UserProfileScreen = ({ navigation, route }) => {
   const [userInfo, setUserInfo] = useState({});
   const { user } = route.params;
-
+  const [img,setImg]=useState('random');
   const convertToJSON = (obj) => {
     try {
       setUserInfo(JSON.parse(obj));
@@ -24,9 +24,24 @@ const UserProfileScreen = ({ navigation, route }) => {
     }
   };
 
+  const getRandomImage=async()=>{
+    await fetch('https://randomuser.me/api/')
+    .then(response => response.json())
+    .then(data => {
+      // Use the data from the API
+      console.log(data.results[0].picture.large);
+      setImg(data.results[0].picture.large)
+    })
+    .catch(error => {
+      // Handle errors
+      console.error(error);
+    });
+  }
+
   // covert  the user to Json object on initial render
   useEffect(() => {
     convertToJSON(user);
+    getRandomImage();
   }, []);
   return (
     <View style={styles.container}>
@@ -41,7 +56,7 @@ const UserProfileScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.UserProfileCardContianer}>
         <UserProfileCard
-          Icon={Ionicons}
+          img={img}
           name={userInfo?.name}
           email={userInfo?.email}
         />
@@ -51,7 +66,7 @@ const UserProfileScreen = ({ navigation, route }) => {
           text={"My Account"}
           Icon={Ionicons}
           iconName={"person"}
-          onPress={() => navigation.navigate("myaccount", { user: userInfo })}
+          onPress={() => navigation.navigate("myaccount", { user: userInfo,img:img})}
         />
         <OptionList
           text={"Wishlist"}

@@ -6,73 +6,64 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { colors, network } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import ProductList from "../../components/ProductList/ProductList";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomInput from "../../components/CustomInput";
 import ProgressDialog from "react-native-progress-dialog";
-import OrderList from "../../components/OrderList/OrderList";
 
-const ViewOrdersScreen = ({ navigation, route }) => {
+const SellerViewProductScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
-  const [user, setUser] = useState({});
   const [isloading, setIsloading] = useState(false);
   const [refeshing, setRefreshing] = useState(false);
   const [alertType, setAlertType] = useState("error");
+
   const [label, setLabel] = useState("Loading...");
   const [error, setError] = useState("");
-  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   const [foundItems, setFoundItems] = useState([]);
   const [filterItem, setFilterItem] = useState("");
 
-  //method to convert the authUser to json object
-  const getToken = (obj) => {
-    try {
-      setUser(JSON.parse(obj));
-    } catch (e) {
-      setUser(obj);
-      return obj.token;
-    }
-    return JSON.parse(obj).token;
+  var myHeaders = new Headers();
+  myHeaders.append("x-auth-token", authUser.token);
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  var ProductListRequestOptions = {
+    method: "GET",
+    redirect: "follow",
   };
 
   //method call on pull refresh
   const handleOnRefresh = () => {
     setRefreshing(true);
-    fetchOrders();
+    fetchProduct();
     setRefreshing(false);
   };
 
-  //method to navigate to order detail screen of specific order
-  const handleOrderDetail = (item) => {
-    navigation.navigate("vieworderdetails", {
-      orderDetail: item,
-      Token: getToken(authUser),
-    });
-  };
-
-  //method the fetch the order data from server using API call
-  const fetchOrders = () => {
-    var myHeaders = new Headers();
-    myHeaders.append("x-auth-token", getToken(authUser));
-
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
+  //method to delete the specific order
+  const handleDelete = (id) => {
     setIsloading(true);
-    fetch(`${network.serverip}/admin/orders`, requestOptions)
+    console.log(`${network.serverip}/delete-product?id=${id}`);
+    fetch(`${network.serverip}/sellerDelete-product?id=${id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
-          setOrders(result.data);
-          setFoundItems(result.data);
-          setError("");
+          fetchProduct();
+          setError(result.message);
+          setAlertType("success");
         } else {
           setError(result.message);
+          setAlertType("error");
         }
         setIsloading(false);
       })
@@ -83,26 +74,69 @@ const ViewOrdersScreen = ({ navigation, route }) => {
       });
   };
 
+  //method for alert
+  const showConfirmDialog = (id) => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete the category?",
+      [
+        {
+          text: "Yes",
+          onPress: () => {
+            handleDelete(id);
+          },
+        },
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
+
+  //method the fetch the product data from server using API call
+  const fetchProduct = () => {
+    setIsloading(true);
+    fetch(`${network.serverip}/sellerProducts/${authUser.email}`, ProductListRequestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          setProducts(result.data);
+          setFoundItems(result.data);
+          setError("");
+          setIsloading(false);
+        } else {
+          setError(result.message);
+          setIsloading(false);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+        console.log("error", error);
+        setIsloading(false);
+      });
+  };
+
   //method to filer the orders for by title [search bar]
   const filter = () => {
     const keyword = filterItem;
     if (keyword !== "") {
-      const results = orders?.filter((item) => {
-        return item?.orderId.toLowerCase().includes(keyword.toLowerCase());
+      const results = products?.filter((product) => {
+        return product?.title.toLowerCase().includes(keyword.toLowerCase());
       });
       setFoundItems(results);
     } else {
-      setFoundItems(orders);
+      setFoundItems(products);
     }
   };
+
   //filter the data whenever filteritem value change
   useEffect(() => {
     filter();
   }, [filterItem]);
 
-  //fetch the orders on initial render
+  //fetch the categories on initial render
   useEffect(() => {
-    fetchOrders();
+    fetchProduct();
   }, []);
 
   return (
@@ -121,13 +155,20 @@ const ViewOrdersScreen = ({ navigation, route }) => {
             color={colors.muted}
           />
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("addproduct", { authUser: authUser });
+          }}
+        >
+          <AntDesign name="plussquare" size={30} color={colors.muted} />
+        </TouchableOpacity>
       </View>
       <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameText}>View Order</Text>
+          <Text style={styles.screenNameText}>View Product</Text>
         </View>
         <View>
-          <Text style={styles.screenNameParagraph}>View all orders</Text>
+          <Text style={styles.screenNameParagraph}>View all products</Text>
         </View>
       </View>
       <CustomAlert message={error} type={alertType} />
@@ -138,21 +179,36 @@ const ViewOrdersScreen = ({ navigation, route }) => {
         setValue={setFilterItem}
       />
       <ScrollView
-        style={{ flex: 1, width: "100%", padding: 2 }}
+        style={{ flex: 1, width: "100%" }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refeshing} onRefresh={handleOnRefresh} />
         }
       >
         {foundItems && foundItems.length == 0 ? (
-          <Text>{`No order found with the order # ${filterItem}!`}</Text>
+          <Text>{`No product found with the name of ${filterItem}!`}</Text>
         ) : (
-          foundItems.map((order, index) => {
+          foundItems.map((product, index) => {
             return (
-              <OrderList
-                item={order}
+              <ProductList
                 key={index}
-                onPress={() => handleOrderDetail(order)}
+                image={`${product?.image}`}
+                title={product?.title}
+                category={product?.category?.title}
+                price={product?.price}
+                qantity={product?.sku}
+                onPressView={() => {
+                  console.log("view is working " + product._id);
+                }}
+                onPressEdit={() => {
+                  navigation.navigate("SellerEditProductScreen", {
+                    product: product,
+                    authUser: authUser,
+                  });
+                }}
+                onPressDelete={() => {
+                  showConfirmDialog(product._id);
+                }}
               />
             );
           })
@@ -162,7 +218,7 @@ const ViewOrdersScreen = ({ navigation, route }) => {
   );
 };
 
-export default ViewOrdersScreen;
+export default SellerViewProductScreen;
 
 const styles = StyleSheet.create({
   container: {

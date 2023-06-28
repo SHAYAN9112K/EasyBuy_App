@@ -1,12 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View ,Image} from "react-native";
+import React, { useEffect, useState } from "react";
 import { colors } from "../../constants";
 
-const UserProfileCard = ({ Icon, name, email }) => {
+const UserProfileCard = ({ name, email ,img}) => {
+
+  
+  console.log("imageee:  "+img)
   return (
     <View style={styles.Container}>
       <View style={styles.avatarContainer}>
-        <Icon name="person" size={80} color={colors.primary} />
+        {/* <Icon name="person" size={80} color={colors.primary} /> */}
+        <Image
+            source={{ uri: img}}
+            style={{ height: "100%", width:"100%", resizeMode: "contain",borderRadius: 20, }}
+          />
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.usernameText}>{name}</Text>
@@ -29,12 +36,11 @@ const styles = StyleSheet.create({
   avatarContainer: {
     display: "flex",
     width: "40%",
-
+    height:"90%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.primary_light,
     borderRadius: 20,
-    padding: 10,
   },
   infoContainer: {
     display: "flex",

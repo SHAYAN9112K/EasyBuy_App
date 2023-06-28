@@ -28,7 +28,7 @@ const MyOrderScreen = ({ navigation, route }) => {
   //method to remove the authUser from aysnc storage and navigate to login
   const logout = async () => {
     await AsyncStorage.removeItem("authUser");
-    navigation.replace("login");
+    navigation.replace("drawers");
   };
 
   //method to convert the authUser to json object

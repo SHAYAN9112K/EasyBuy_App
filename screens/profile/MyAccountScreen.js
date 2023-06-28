@@ -16,7 +16,7 @@ import { network } from "../../constants";
 const MyAccountScreen = ({ navigation, route }) => {
   const [showBox, setShowBox] = useState(true);
   const [error, setError] = useState("");
-  const { user } = route.params;
+  const { user,img } = route.params;
   const userID = user["_id"];
 
   //method for alert
@@ -81,7 +81,7 @@ const MyAccountScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.UserProfileCardContianer}>
         <UserProfileCard
-          Icon={Ionicons}
+          img={img}
           name={user["name"]}
           email={user["email"]}
         />
