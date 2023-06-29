@@ -117,6 +117,84 @@ import {
           console.log("error", error);
         });
     };
+
+    const handleBan = async (selectedRider) => {
+      setIsloading(true);
+  
+      var myHeaders1 = new Headers();
+      myHeaders1.append("x-auth-token", authUser.token);
+      myHeaders1.append("Content-Type", "application/json");
+  
+      var raw1 = JSON.stringify({
+        accountStatus:"ban"
+      });
+  
+      var requestOptions1 = {
+        method: "PATCH",
+        headers: myHeaders1,
+        body: raw1,
+        redirect: "follow",
+      };
+  
+      await fetch(
+        `${network.serverip}/admin/banPerson?id=${selectedRider._id}`,
+        requestOptions1
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.success == true) {
+            setIsloading(false);
+            setError(result.message);
+            setAlertType("success");
+            fetchUsers();
+            
+          }
+        })
+        .catch((error) => {
+          setIsloading(false);
+          setError(error.message);
+          console.log("errorss", error);
+        });
+    }
+  
+    const handleUnBan = async (selectedRider) => {
+      setIsloading(true);
+  
+      var myHeaders1 = new Headers();
+      myHeaders1.append("x-auth-token", authUser.token);
+      myHeaders1.append("Content-Type", "application/json");
+  
+      var raw1 = JSON.stringify({
+        accountStatus:"active"
+      });
+  
+      var requestOptions1 = {
+        method: "PATCH",
+        headers: myHeaders1,
+        body: raw1,
+        redirect: "follow",
+      };
+  
+      await fetch(
+        `${network.serverip}/admin/UnbanPerson?id=${selectedRider._id}`,
+        requestOptions1
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.success == true) {
+            setIsloading(false);
+            setError(result.message);
+            setAlertType("success");
+            fetchUsers();
+           
+          }
+        })
+        .catch((error) => {
+          setIsloading(false);
+          setError(error.message);
+          console.log("errorss", error);
+        });
+    }
   
     //filter the data whenever filteritem value change
     useEffect(() => {
@@ -187,12 +265,18 @@ import {
               // onPress={{}}
               />
               <View style={{flexDirection:'row', justifyContent:"space-evenly"}}>
-              <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+              {/* <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
                 <Text style={{ color: colors.white }}>Orders</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+              </TouchableOpacity> */}
+              {item?.accountStatus=="ban"?
+              <TouchableOpacity style={styles.actionButton} onPress={() => handleUnBan(item)}>
+              <Text style={{ color: colors.white }}>Un Ban</Text>
+            </TouchableOpacity>
+              :
+              <TouchableOpacity style={styles.actionButton} onPress={() => handleBan(item)}>
                 <Text style={{ color: colors.white }}>Ban</Text>
               </TouchableOpacity>
+              }
               <TouchableOpacity style={styles.actionButton} onPress={() => handleDeletePerson(item)}>
                 <Text style={{ color: colors.white }}>Delete</Text>
               </TouchableOpacity>
