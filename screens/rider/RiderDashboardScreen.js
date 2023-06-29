@@ -60,7 +60,7 @@ const RiderDashboardScreen = ({ navigation, route }) => {
   //method call on Pull refresh
   const handleOnRefresh = () => {
     setRefreshing(true);
-    fetchStats();
+    fetchOrders();
     setRefreshing(false);
   };
 
