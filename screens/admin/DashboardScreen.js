@@ -174,19 +174,7 @@ const DashboardScreen = ({ navigation, route }) => {
         </View>
         <View style={{ flex: 1, width: "100%" }}>
           <ScrollView style={styles.actionContainer}>
-            <OptionList
-              text={"Products"}
-              Icon={Ionicons}
-              iconName={"md-square"}
-              onPress={() =>
-                navigation.navigate("viewproduct", { authUser: user })
-              }
-              onPressSecondary={() =>
-                navigation.navigate("addproduct", { authUser: user })
-              }
-              type="morden"
-            />
-            <OptionList
+          <OptionList
               text={"Categories"}
               Icon={Ionicons}
               iconName={"menu"}
@@ -199,20 +187,29 @@ const DashboardScreen = ({ navigation, route }) => {
               type="morden"
             />
             <OptionList
-              text={"Orders"}
+              text={"Users"}
               Icon={Ionicons}
-              iconName={"cart"}
+              iconName={"md-square"}
               onPress={() =>
-                navigation.navigate("vieworder", { authUser: user })
+                navigation.navigate("viewusers", { authUser: user })
               }
               type="morden"
             />
             <OptionList
-              text={"Users"}
+              text={"Sellers"}
+              Icon={Ionicons}
+              iconName={"cart"}
+              onPress={() =>
+                navigation.navigate("ViewSellersScreen", { authUser: user })
+              }
+              type="morden"
+            />
+            <OptionList
+              text={"Riders"}
               Icon={Ionicons}
               iconName={"person"}
               onPress={() =>
-                navigation.navigate("viewusers", { authUser: user })
+                navigation.navigate("ViewRidersScreen", { authUser: user })
               }
               type="morden"
             />
