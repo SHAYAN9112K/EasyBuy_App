@@ -87,7 +87,8 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
     myHeaders1.append("Content-Type", "application/json");
 
     var raw1 = JSON.stringify({
-      riderEmail:selectedRider.email
+      riderEmail:selectedRider.email,
+      status:"Sent To Rider"
     });
 
     var requestOptions1 = {
@@ -102,10 +103,11 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
       requestOptions1
     )
       .then((response) => response.json())
-      .then((result) => {
+      .then((result) => {navigate
         if (result.success == true) {
           setIsloading(false);
-          alert("order Sent to Rider Succesfully")
+          alert("order Sent to Rider Succesfully");
+          navigation.navigate("SellerDashboardScreen")
         }
       })
       .catch((error) => {
@@ -188,7 +190,7 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
           foundItems.map((item, index) => (
             <View style={styles.container1}>
               <RiderList
-                key={index}
+                key={Math.random()}
                 username={item?.name}
                 email={item?.email}
                 usertype={item?.userType}
