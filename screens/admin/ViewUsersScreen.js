@@ -15,6 +15,7 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomInput from "../../components/CustomInput/";
 import ProgressDialog from "react-native-progress-dialog";
 import UserList from "../../components/UserList/UserList";
+import AdminUserList from "../../components/AdminUserList/AdminUserList";
 
 const ViewUsersScreen = ({ navigation, route }) => {
   const [name, setName] = useState("");
@@ -92,6 +93,31 @@ const ViewUsersScreen = ({ navigation, route }) => {
     setName(keyword);
   };
 
+  const handleDeletePerson = (item) => {
+    setIsloading(true);
+    console.log(`${network.serverip}/admin/person?id=${item._id}`);
+    fetch(`${network.serverip}/admin/person?id=${item._id}`,{
+      method: 'DELETE'
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          fetchUsers();
+          setError(result.message);
+          setAlertType("success");
+        } else {
+          setError(result.message);
+          setAlertType("error");
+        }
+        setIsloading(false);
+      })
+      .catch((error) => {
+        setIsloading(false);
+        setError(error.message);
+        console.log("error", error);
+      });
+  };
+
   //filter the data whenever filteritem value change
   useEffect(() => {
     filter();
@@ -101,6 +127,10 @@ const ViewUsersScreen = ({ navigation, route }) => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const alerthello=()=>{
+    alert("jhello")
+  }
 
   return (
     <View style={styles.container}>
@@ -148,12 +178,26 @@ const ViewUsersScreen = ({ navigation, route }) => {
           <Text>{`No user found with the name of ${filterItem}!`}</Text>
         ) : (
           foundItems.map((item, index) => (
-            <UserList
-              key={index}
+            <View style={styles.container1}>
+            <AdminUserList
+              key={Math.random()}
               username={item?.name}
               email={item?.email}
               usertype={item?.userType}
+            // onPress={{}}
             />
+            <View style={{flexDirection:'row', justifyContent:"space-evenly"}}>
+            {/* <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+              <Text style={{ color: colors.white }}>Products</Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+              <Text style={{ color: colors.white }}>Ban</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton} onPress={() => handleDeletePerson(item)}>
+              <Text style={{ color: colors.white }}>Delete</Text>
+            </TouchableOpacity>
+            </View>
+          </View>
           ))
         )}
       </ScrollView>
@@ -215,5 +259,26 @@ const styles = StyleSheet.create({
   screenNameParagraph: {
     marginTop: 5,
     fontSize: 15,
+  },
+  container1: {
+    display: "flex",
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    elevation: 2,
+    marginLeft: 10,
+    marginRight: 10,
+    margin: 5,
+    padding: 5
+  },
+  actionButton: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 5,
+    height: 30,
+    paddingHorizontal: 10,
+    backgroundColor: colors.primary,
+    borderRadius: 5,
+    elevation: 2,
   },
 });

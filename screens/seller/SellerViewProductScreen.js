@@ -53,7 +53,7 @@ const SellerViewProductScreen = ({ navigation, route }) => {
   //method to delete the specific order
   const handleDelete = (id) => {
     setIsloading(true);
-    console.log(`${network.serverip}/delete-product?id=${id}`);
+    console.log(`${network.serverip}/sellerDelete-product?id=${id}`);
     fetch(`${network.serverip}/sellerDelete-product?id=${id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
