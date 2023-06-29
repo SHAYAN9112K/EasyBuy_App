@@ -25,6 +25,7 @@ import SellerEditProductScreen from "../screens/seller/SellerEditProductScreen";
 import SellerViewOrderDetailScreen from "../screens/seller/SellerViewOrderDetailScreen";
 import SellerSendtoRiderScreen from "../screens/seller/SellerSendtoRiderScreen";
 import RiderDashboardScreen from "../screens/rider/RiderDashboardScreen";
+import RiderViewOrderDetailScreen from "../screens/rider/RiderViewOrderDetailScreen";
 import ViewOrderDetailScreen from "../screens/admin/ViewOrderDetailScreen";
 import MyOrderScreen from "../screens/user/MyOrderScreen";
 import MyOrderDetailScreen from "../screens/user/MyOrderDetailScreen";
@@ -62,6 +63,7 @@ const Routes = () => {
         <Stack.Screen name="SellerViewProductScreen" component={SellerViewProductScreen} />
         <Stack.Screen name="SellerSendtoRiderScreen" component={SellerSendtoRiderScreen} />
         <Stack.Screen name="RiderDashboardScreen" component={RiderDashboardScreen} />
+        <Stack.Screen name="RiderViewOrderDetailScreen" component={RiderViewOrderDetailScreen} />
         <Stack.Screen name="addproduct" component={AddProductScreen} />
         <Stack.Screen name="viewproduct" component={ViewProductScreen} />
         <Stack.Screen name="editproduct" component={EditProductScreen} />

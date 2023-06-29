@@ -41,11 +41,11 @@ const RiderDashboardScreen = ({ navigation, route }) => {
   };
 
   const handleOrderDetail = (item) => {
-    // navigation.navigate("SellerViewOrderDetailScreen", {
-    //   orderDetail: item,
-    //   Token: getToken(authUser),
-    //   user:authUser
-    // });
+    navigation.navigate("RiderViewOrderDetailScreen", {
+      orderDetail: item,
+      Token: getToken(authUser),
+      user:authUser
+    });
   };
 
   // var myHeaders = new Headers();

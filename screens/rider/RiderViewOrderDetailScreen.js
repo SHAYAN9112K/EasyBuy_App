@@ -15,7 +15,7 @@ import BasicProductList from "../../components/BasicProductList/BasicProductList
 import CustomButton from "../../components/CustomButton";
 import DropDownPicker from "react-native-dropdown-picker";
 
-const ViewOrderDetailScreen = ({ navigation, route }) => {
+const RiderViewOrderDetailScreen = ({ navigation, route }) => {
   const { orderDetail, Token } = route.params;
   const [isloading, setIsloading] = useState(false);
   const [label, setLabel] = useState("Loading..");
@@ -27,9 +27,11 @@ const ViewOrderDetailScreen = ({ navigation, route }) => {
   const [value, setValue] = useState(null);
   const [statusDisable, setStatusDisable] = useState(false);
   const [items, setItems] = useState([
-    { label: "Pending", value: "pending" },
-    { label: "Shipped", value: "shipped" },
+    { label: "Sent To Rider", value: "Sent To Rider" },
+    { label: "Shipped", value: "Shipped" },
     { label: "Delivered", value: "delivered" },
+    { label: "Pending", value: "pending" },
+    
   ]);
 
   //method to convert the time into AM PM format
@@ -257,7 +259,7 @@ const ViewOrderDetailScreen = ({ navigation, route }) => {
   );
 };
 
-export default ViewOrderDetailScreen;
+export default RiderViewOrderDetailScreen;
 
 const styles = StyleSheet.create({
   container: {
