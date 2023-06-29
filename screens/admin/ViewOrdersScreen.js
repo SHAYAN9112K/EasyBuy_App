@@ -1,33 +1,69 @@
 import {
   StyleSheet,
-  Text,
   StatusBar,
   View,
-  ScrollView,
   TouchableOpacity,
+  Text,
+  ScrollView,
+  FlatList,
   RefreshControl,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { colors, network } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../../constants";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomInput from "../../components/CustomInput";
+import CustomCard from "../../components/CustomCard/CustomCard";
+import OptionList from "../../components/OptionList/OptionList";
+import InternetConnectionAlert from "react-native-internet-connection-alert";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProgressDialog from "react-native-progress-dialog";
 import OrderList from "../../components/OrderList/OrderList";
 
 const ViewOrdersScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
-  const [user, setUser] = useState({});
-  const [isloading, setIsloading] = useState(false);
-  const [refeshing, setRefreshing] = useState(false);
-  const [alertType, setAlertType] = useState("error");
+  const [user, setUser] = useState(authUser);
   const [label, setLabel] = useState("Loading...");
   const [error, setError] = useState("");
+  const [isloading, setIsloading] = useState(false);
+  const [data, setData] = useState([]);
+  const [refeshing, setRefreshing] = useState(false);
+  const [alertType, setAlertType] = useState("error");
   const [orders, setOrders] = useState([]);
   const [foundItems, setFoundItems] = useState([]);
   const [filterItem, setFilterItem] = useState("");
 
-  //method to convert the authUser to json object
+  //method to remove the auth user from async storage and navigate the login if token expires
+  const logout = async () => {
+    await AsyncStorage.removeItem("authUser");
+    navigation.replace("drawers");
+  };
+
+  const handleOrderDetail = (item) => {
+    navigation.navigate("vieworderdetails", {
+      orderDetail: item,
+      Token: getToken(authUser),
+      user:authUser
+    });
+  };
+
+  // var myHeaders = new Headers();
+  // myHeaders.append("x-auth-token", authUser.token);
+
+  // var requestOptions = {
+  //   method: "GET",
+  //   headers: myHeaders,
+  //   redirect: "follow",
+  // };
+
+  //method call on Pull refresh
+  const handleOnRefresh = () => {
+    setRefreshing(true);
+    fetchOrders();
+    setRefreshing(false);
+  };
+
   const getToken = (obj) => {
     try {
       setUser(JSON.parse(obj));
@@ -36,21 +72,6 @@ const ViewOrdersScreen = ({ navigation, route }) => {
       return obj.token;
     }
     return JSON.parse(obj).token;
-  };
-
-  //method call on pull refresh
-  const handleOnRefresh = () => {
-    setRefreshing(true);
-    fetchOrders();
-    setRefreshing(false);
-  };
-
-  //method to navigate to order detail screen of specific order
-  const handleOrderDetail = (item) => {
-    navigation.navigate("vieworderdetails", {
-      orderDetail: item,
-      Token: getToken(authUser),
-    });
   };
 
   //method the fetch the order data from server using API call
@@ -64,7 +85,7 @@ const ViewOrdersScreen = ({ navigation, route }) => {
       redirect: "follow",
     };
     setIsloading(true);
-    fetch(`${network.serverip}/admin/orders`, requestOptions)
+    fetch(`${network.serverip}/rider/getMyOrders/${authUser.email}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -106,10 +127,13 @@ const ViewOrdersScreen = ({ navigation, route }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <ProgressDialog visible={isloading} label={label} />
-      <StatusBar></StatusBar>
-      <View style={styles.TopBarContainer}>
+    <InternetConnectionAlert onChange={(connectionState) => {}}>
+      <View style={styles.container}>
+        <StatusBar></StatusBar>
+        <ProgressDialog visible={isloading} label={label} />
+        <View style={styles.topBarContainer}>
+          
+        <View style={styles.TopBarContainer}>
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
@@ -121,14 +145,22 @@ const ViewOrdersScreen = ({ navigation, route }) => {
             color={colors.muted}
           />
         </TouchableOpacity>
-      </View>
-      <View style={styles.screenNameContainer}>
-        <View>
-          <Text style={styles.screenNameText}>View Order</Text>
+        {/* <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("addproduct", { authUser: authUser });
+          }}
+        >
+          <AntDesign name="plussquare" size={30} color={colors.muted} />
+        </TouchableOpacity> */}
+      </View> 
+          
         </View>
+        
+        <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameParagraph}>View all orders</Text>
+          <Text style={styles.screenNameText}>Orders</Text>
         </View>
+       
       </View>
       <CustomAlert message={error} type={alertType} />
       <CustomInput
@@ -145,7 +177,7 @@ const ViewOrdersScreen = ({ navigation, route }) => {
         }
       >
         {foundItems && foundItems.length == 0 ? (
-          <Text>{`No order found with the order # ${filterItem}!`}</Text>
+          <Text>{`No order found `}</Text>
         ) : (
           foundItems.map((order, index) => {
             return (
@@ -158,7 +190,9 @@ const ViewOrdersScreen = ({ navigation, route }) => {
           })
         )}
       </ScrollView>
-    </View>
+        
+      </View>
+    </InternetConnectionAlert>
   );
 };
 
@@ -166,13 +200,50 @@ export default ViewOrdersScreen;
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     flexDirecion: "row",
     backgroundColor: colors.light,
     alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
+    justifyContent: "flex-start",
+    paddingBottom: 0,
     flex: 1,
+    marginHorizontal:4
   },
+  topBarContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+  },
+  toBarText: {
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  bodyContainer: {
+    width: "100%",
+  },
+  headingContainer: {
+    display: "flex",
+    justifyContent: "flex-start",
+    paddingLeft: 2,
+    width: "100%",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  headingText: {
+    fontSize: 20,
+    color: colors.muted,
+    fontWeight: "800",
+  },
+  actionContainer: { padding: 20, width: "100%", flex: 1 },
   TopBarContainer: {
     width: "100%",
     display: "flex",
@@ -206,11 +277,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    
   },
   screenNameText: {
     fontSize: 30,
     fontWeight: "800",
     color: colors.muted,
+    marginHorizontal:10
   },
   screenNameParagraph: {
     marginTop: 5,

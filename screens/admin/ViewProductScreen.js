@@ -12,9 +12,9 @@ import React, { useState, useEffect } from "react";
 import { colors, network } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import ProductList from "../../components/ProductList/ProductList";
+import AdminProductList from "../../components/AdminProductList/AdminProductList";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import CustomInput from "../../components/CustomInput/";
+import CustomInput from "../../components/CustomInput";
 import ProgressDialog from "react-native-progress-dialog";
 
 const ViewProductScreen = ({ navigation, route }) => {
@@ -53,8 +53,8 @@ const ViewProductScreen = ({ navigation, route }) => {
   //method to delete the specific order
   const handleDelete = (id) => {
     setIsloading(true);
-    console.log(`${network.serverip}/delete-product?id=${id}`);
-    fetch(`${network.serverip}/delete-product?id=${id}`, requestOptions)
+    console.log(`${network.serverip}/sellerDelete-product?id=${id}`);
+    fetch(`${network.serverip}/sellerDelete-product?id=${id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -96,7 +96,7 @@ const ViewProductScreen = ({ navigation, route }) => {
   //method the fetch the product data from server using API call
   const fetchProduct = () => {
     setIsloading(true);
-    fetch(`${network.serverip}/products`, ProductListRequestOptions)
+    fetch(`${network.serverip}/sellerProducts/${authUser.email}`, ProductListRequestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -155,13 +155,13 @@ const ViewProductScreen = ({ navigation, route }) => {
             color={colors.muted}
           />
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             navigation.navigate("addproduct", { authUser: authUser });
           }}
         >
           <AntDesign name="plussquare" size={30} color={colors.muted} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.screenNameContainer}>
         <View>
@@ -190,9 +190,9 @@ const ViewProductScreen = ({ navigation, route }) => {
         ) : (
           foundItems.map((product, index) => {
             return (
-              <ProductList
+              <AdminProductList
                 key={index}
-                image={product?.image}
+                image={`${product?.image}`}
                 title={product?.title}
                 category={product?.category?.title}
                 price={product?.price}
@@ -200,15 +200,7 @@ const ViewProductScreen = ({ navigation, route }) => {
                 onPressView={() => {
                   console.log("view is working " + product._id);
                 }}
-                onPressEdit={() => {
-                  navigation.navigate("editproduct", {
-                    product: product,
-                    authUser: authUser,
-                  });
-                }}
-                onPressDelete={() => {
-                  showConfirmDialog(product._id);
-                }}
+                
               />
             );
           })

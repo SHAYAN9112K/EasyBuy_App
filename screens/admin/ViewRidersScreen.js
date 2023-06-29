@@ -265,9 +265,9 @@ import {
               // onPress={{}}
               />
               <View style={{flexDirection:'row', justifyContent:"space-evenly"}}>
-              {/* <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+              <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate("vieworder", { authUser: item })}>
                 <Text style={{ color: colors.white }}>Orders</Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
               {item?.accountStatus=="ban"?
               <TouchableOpacity style={styles.actionButton} onPress={() => handleUnBan(item)}>
               <Text style={{ color: colors.white }}>Un Ban</Text>

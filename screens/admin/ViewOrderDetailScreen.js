@@ -27,9 +27,11 @@ const ViewOrderDetailScreen = ({ navigation, route }) => {
   const [value, setValue] = useState(null);
   const [statusDisable, setStatusDisable] = useState(false);
   const [items, setItems] = useState([
-    { label: "Pending", value: "pending" },
-    { label: "Shipped", value: "shipped" },
+    { label: "Sent To Rider", value: "Sent To Rider" },
+    { label: "Shipped", value: "Shipped" },
     { label: "Delivered", value: "delivered" },
+    { label: "Pending", value: "pending" },
+    
   ]);
 
   //method to convert the time into AM PM format
@@ -224,35 +226,6 @@ const ViewOrderDetailScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.emptyView}></View>
       </ScrollView>
-      <View style={styles.bottomContainer}>
-        <View>
-          <DropDownPicker
-            style={{ width: 200 }}
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            disabled={statusDisable}
-            disabledStyle={{
-              backgroundColor: colors.light,
-              borderColor: colors.white,
-            }}
-            labelStyle={{ color: colors.muted }}
-          />
-        </View>
-        <View>
-          {statusDisable == false ? (
-            <CustomButton
-              text={"Update"}
-              onPress={() => handleUpdateStatus(orderDetail?._id)}
-            />
-          ) : (
-            <CustomButton text={"Update"} disabled />
-          )}
-        </View>
-      </View>
     </View>
   );
 };
