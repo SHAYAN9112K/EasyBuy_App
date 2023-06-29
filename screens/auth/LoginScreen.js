@@ -106,6 +106,10 @@ const LoginScreen = ({ navigation }) => {
             return setError("You are not an BUYER please navigate to RIDER Login");
           }
           if (result?.data?.userType == "USER"){
+            if (result?.data?.accountStatus == "ban") {
+              setIsloading(false);
+              return setError("You are Currently Banned by Admin");
+            }
             _storeData(result.data);
             setIsloading(false);
             navigation.replace("tab", { user: result.data }); // naviagte to User Dashboard

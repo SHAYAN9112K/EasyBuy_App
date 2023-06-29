@@ -105,6 +105,10 @@ const LoginScreen = ({ navigation }) => {
             return setError("You are not an SELLER please navigate to ADMIN Login");
           }
           if (result?.data?.userType == "SELLER") {
+            if (result?.data?.accountStatus == "ban") {
+              setIsloading(false);
+              return setError("You are Currently Banned by Admin");
+            }
             _storeData(result.data);
             setIsloading(false);
             navigation.replace("SellerDashboardScreen", { authUser: result.data });
