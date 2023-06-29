@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  FlatList
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { colors, network } from "../../constants";
@@ -86,7 +87,7 @@ const ViewUsersScreen = ({ navigation, route }) => {
     myHeaders1.append("Content-Type", "application/json");
 
     var raw1 = JSON.stringify({
-      accountStatus:"ban"
+      accountStatus: "ban"
     });
 
     var requestOptions1 = {
@@ -107,7 +108,7 @@ const ViewUsersScreen = ({ navigation, route }) => {
           setError(result.message);
           setAlertType("success");
           fetchUsers();
-          
+
         }
       })
       .catch((error) => {
@@ -125,7 +126,7 @@ const ViewUsersScreen = ({ navigation, route }) => {
     myHeaders1.append("Content-Type", "application/json");
 
     var raw1 = JSON.stringify({
-      accountStatus:"active"
+      accountStatus: "active"
     });
 
     var requestOptions1 = {
@@ -146,7 +147,7 @@ const ViewUsersScreen = ({ navigation, route }) => {
           setError(result.message);
           setAlertType("success");
           fetchUsers();
-         
+
         }
       })
       .catch((error) => {
@@ -174,7 +175,7 @@ const ViewUsersScreen = ({ navigation, route }) => {
   const handleDeletePerson = (item) => {
     setIsloading(true);
     console.log(`${network.serverip}/admin/person?id=${item._id}`);
-    fetch(`${network.serverip}/admin/person?id=${item._id}`,{
+    fetch(`${network.serverip}/admin/person?id=${item._id}`, {
       method: 'DELETE'
     })
       .then((response) => response.json())
@@ -206,7 +207,7 @@ const ViewUsersScreen = ({ navigation, route }) => {
     fetchUsers();
   }, []);
 
-  const alerthello=()=>{
+  const alerthello = () => {
     alert("jhello")
   }
 
@@ -254,35 +255,42 @@ const ViewUsersScreen = ({ navigation, route }) => {
       >
         {foundItems && foundItems.length == 0 ? (
           <Text>{`No user found with the name of ${filterItem}!`}</Text>
-        ) : (
-          foundItems.map((item, index) => (
-            <View style={styles.container1}>
-            <AdminUserList
-              key={Math.random()}
-              username={item?.name}
-              email={item?.email}
-              usertype={item?.userType}
-            // onPress={{}}
-            />
-            <View style={{flexDirection:'row', justifyContent:"space-evenly"}}>
-            {/* <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+        ) : (<FlatList
+          data={foundItems}
+          showsVerticalScrollIndicator={true}
+          renderItem={({ item, index }) => {
+            if (item != undefined) {
+              return (
+                <View style={styles.container1}>
+                  <AdminUserList
+                    key={Math.random()}
+                    username={item?.name}
+                    email={item?.email}
+                    usertype={item?.userType}
+                  // onPress={{}}
+                  />
+                  <View style={{ flexDirection: 'row', justifyContent: "space-evenly" }}>
+                    {/* <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
               <Text style={{ color: colors.white }}>Products</Text>
             </TouchableOpacity> */}
-            {item?.accountStatus=="ban"?
-              <TouchableOpacity style={styles.actionButton} onPress={() => handleUnBan(item)}>
-              <Text style={{ color: colors.white }}>Un Ban</Text>
-            </TouchableOpacity>
-              :
-              <TouchableOpacity style={styles.actionButton} onPress={() => handleBan(item)}>
-                <Text style={{ color: colors.white }}>Ban</Text>
-              </TouchableOpacity>
-              }
-            <TouchableOpacity style={styles.actionButton} onPress={() => handleDeletePerson(item)}>
-              <Text style={{ color: colors.white }}>Delete</Text>
-            </TouchableOpacity>
-            </View>
-          </View>
-          ))
+                    {item?.accountStatus == "ban" ?
+                      <TouchableOpacity style={styles.actionButton} onPress={() => handleUnBan(item)}>
+                        <Text style={{ color: colors.white }}>Un Ban</Text>
+                      </TouchableOpacity>
+                      :
+                      <TouchableOpacity style={styles.actionButton} onPress={() => handleBan(item)}>
+                        <Text style={{ color: colors.white }}>Ban</Text>
+                      </TouchableOpacity>
+                    }
+                    <TouchableOpacity style={styles.actionButton} onPress={() => handleDeletePerson(item)}>
+                      <Text style={{ color: colors.white }}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            }
+          }}
+        />
         )}
       </ScrollView>
     </View>
