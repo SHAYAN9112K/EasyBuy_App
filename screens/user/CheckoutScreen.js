@@ -6,9 +6,10 @@ import {
   Text,
   ScrollView,
   Modal,
+  ActivityIndicator
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import BasicProductList from "../../components/BasicProductList/BasicProductList";
 import { colors, network } from "../../constants";
 import CustomButton from "../../components/CustomButton";
@@ -18,10 +19,21 @@ import { bindActionCreators } from "redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomInput from "../../components/CustomInput";
 import ProgressDialog from "react-native-progress-dialog";
+import * as Location from 'expo-location';
+import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
+import { event } from "react-native-reanimated";
+import { tr } from "date-fns/locale";
 
 const CheckoutScreen = ({ navigation, route }) => {
+
+  const mapRef = useRef(null);
+  const [lat, setLat] = useState(33.8057189);
+  const [markerCoords, setMarkerCoords] = useState({ latitude:0, longitude:0 });
+  const [long, setLong] = useState(72.3497022);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibletop, setModalVisibletop] = useState(false);
   const [isloading, setIsloading] = useState(false);
+  const [temp, setTemp] = useState(false);
   const cartproduct = useSelector((state) => state.product);
   const dispatch = useDispatch();
   const { emptyCart } = bindActionCreators(actionCreaters, dispatch);
@@ -34,13 +46,59 @@ const CheckoutScreen = ({ navigation, route }) => {
   const [streetAddress, setStreetAddress] = useState("");
   const [zipcode, setZipcode] = useState("");
 
+  const handleMapPress = (event) => {
+    setTemp(true)
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    console.log("cords are :", latitude, "and ", longitude)
+    setLat(latitude);
+    setLong(longitude);
+    setMarkerCoords({ latitude, longitude });
+    handleMarkerPress(event);
+
+  };
+
+  const handleMarkerPress = async (event) => {
+    // setTemp(false)
+    const { coordinate } = event.nativeEvent;
+
+    const geocode = await Location.reverseGeocodeAsync(coordinate);
+    // setLocationInfo(geocode[0]);
+    console.log(geocode[0])
+    setCountry(geocode[0].country);
+    setCity(geocode[0].city);
+    setZipcode(geocode[0].postalCode);
+    await this.mark.setNativeProps({ title: `Countryis: ${geocode[0].country}` ,description:`City: ${geocode[0].city}` });
+     setTimeout(() => {
+      this.mark.showCallout();
+      setTemp(false)
+     }, 1);
+  };
+
+
   //method to remove the authUser from aysnc storage and navigate to login
   const logout = async () => {
     await AsyncStorage.removeItem("authUser");
     navigation.replace("drawers");
   };
 
-  
+
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    let latitude = location.coords.latitude;
+    let longitude = location.coords.longitude;
+    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+    setLong(longitude);
+    setLat(latitude);
+  }
+
+
 
   //method to handle checkout
   const handleCheckout = async () => {
@@ -49,7 +107,7 @@ const CheckoutScreen = ({ navigation, route }) => {
     const value = await AsyncStorage.getItem("authUser");
     let user = JSON.parse(value);
     console.log("Checkout:", user.token);
-    let authEmail=user.email;
+    let authEmail = user.email;
 
     myHeaders.append("x-auth-token", user.token);
     myHeaders.append("Content-Type", "application/json");
@@ -63,7 +121,7 @@ const CheckoutScreen = ({ navigation, route }) => {
         productId: product._id,
         price: product.price,
         quantity: product.quantity,
-        sellerEmail:product.sellerEmail
+        sellerEmail: product.sellerEmail
       };
       totalamount += parseInt(product.price) * parseInt(product.quantity);
       payload.push(obj);
@@ -79,6 +137,8 @@ const CheckoutScreen = ({ navigation, route }) => {
       city: city,
       zipcode: zipcode,
       shippingAddress: streetAddress,
+      customerLatitude: lat,
+      customerLongitude: long
     });
 
     var requestOptions = {
@@ -190,7 +250,10 @@ const CheckoutScreen = ({ navigation, route }) => {
         <View style={styles.listContainer}>
           <TouchableOpacity
             style={styles.list}
-            onPress={() => setModalVisible(true)}
+            onPress={() => {
+              getCurrentLocation();
+              setModalVisible(true)
+            }}
           >
             <Text style={styles.secondaryTextSm}>Address</Text>
             <View>
@@ -264,6 +327,14 @@ const CheckoutScreen = ({ navigation, route }) => {
               placeholder={"Enter ZipCode"}
               keyboardType={"number-pad"}
             />
+
+            <Text style={{ fontSize: 10, margin: 10 }}>Choose Location on Map other wise your cuurent location Coordinates will be saved.</Text>
+            <CustomButton
+              onPress={() => {
+                setModalVisibletop(!modalVisibletop);
+              }}
+              text={"Choose Location on Map"}
+            />
             {streetAddress || city || country != "" ? (
               <CustomButton
                 onPress={() => {
@@ -283,6 +354,61 @@ const CheckoutScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibletop}
+        onRequestClose={() => {
+          setModalVisibletop(!modalVisible);
+        }}
+      >
+        <View style={styles.modelBody}>
+
+          <View style={styles.modelAddressContainer}>
+
+
+            <MapView
+              ref={mapRef}
+              style={{ width: 300, height: 300, borderRadius: 20, margin: 10 }}
+              onPress={handleMapPress}
+              initialRegion={{
+                latitude: lat,
+                longitude: long,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+              onLayout={() => { this.mark.showCallout(); }}
+            >
+
+              
+                <Marker ref={ref => { this.mark = ref; }} showCallout={true} coordinate={markerCoords} onPress={handleMarkerPress} title={`Country: ${country}`} 
+                  description={`City: ${city}`}></Marker>
+              
+
+              
+
+
+
+            </MapView>
+
+            <Text style={{ fontSize: 10, margin: 10 }}>Tap on a place to select Address</Text>
+            {temp?
+              <View style={{flexDirection:'row'}}><Text style={{ fontSize: 10, margin: 10 }}>Fetching Location...</Text><ActivityIndicator/></View>
+              :<Text style={{ fontSize: 10, margin: 10 }}>{city}  {country} </Text>
+            }
+            <CustomButton
+              onPress={() => {
+                setModalVisibletop(!modalVisible);
+              }}
+              text={"close"}
+            />
+
+          </View>
+
+        </View>
+      </Modal>
+
     </View>
   );
 };
@@ -383,9 +509,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     width: 320,
-    height: 400,
     backgroundColor: colors.white,
     borderRadius: 20,
     elevation: 3,
+    borderColor: colors.muted,
+    borderWidth: 1
   },
 });

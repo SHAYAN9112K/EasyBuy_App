@@ -5,17 +5,34 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Modal
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { colors, network } from "../../constants";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,FontAwesome,FontAwesome5 } from "@expo/vector-icons";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import ProgressDialog from "react-native-progress-dialog";
 import BasicProductList from "../../components/BasicProductList/BasicProductList";
 import CustomButton from "../../components/CustomButton";
+import CustomInput from "../../components/CustomInput";
 import DropDownPicker from "react-native-dropdown-picker";
+import * as Location from 'expo-location';
+import MapView, { PROVIDER_GOOGLE, Marker ,Polyline,MapViewDirections} from 'react-native-maps';
 
 const RiderViewOrderDetailScreen = ({ navigation, route }) => {
+ const [customerLat, setCustomerLat] = useState(34.8057189);
+  const [customerLong, setCustomerLong] = useState(71.3497022);
+  const [riderLat, setRiderLat] = useState(45);
+  const [riderLong, setRiderLong] = useState(-122.4324);
+  const mapRef = useRef(null);
+  const [lat, setLat] = useState(45);
+  const [long, setLong] = useState(-122.4324);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [DirectionButton, setDirectionButton] = useState(false);
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [zipcode, setZipcode] = useState("");
   const { orderDetail, Token } = route.params;
   const [isloading, setIsloading] = useState(false);
   const [label, setLabel] = useState("Loading..");
@@ -31,8 +48,19 @@ const RiderViewOrderDetailScreen = ({ navigation, route }) => {
     { label: "Shipped", value: "Shipped" },
     { label: "Delivered", value: "delivered" },
     { label: "Pending", value: "pending" },
-    
+
   ]);
+
+  const handleMoveToMarker = (lati,longi) => {
+    console.log("moves")
+    mapRef.current.animateToRegion({
+      latitude: lati,
+      longitude: longi,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    });
+  };
+
 
   //method to convert the time into AM PM format
   function tConvert(time) {
@@ -45,6 +73,46 @@ const RiderViewOrderDetailScreen = ({ navigation, route }) => {
       time[0] = +time[0] % 12 || 12; // Adjust hours
     }
     return time.join("");
+  }
+
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    let latitude = location.coords.latitude;
+    let longitude = location.coords.longitude;
+    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+    setLong(longitude);
+    setLat(latitude);
+    setRiderLat(latitude);
+    setRiderLong(longitude);
+
+
+    handleMoveToMarker(latitude,longitude)
+
+  }
+
+  const getCurrentLocationRider = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    let latitude = location.coords.latitude;
+    let longitude = location.coords.longitude;
+    console.log(`riderLatitude: ${latitude}, riderLongitude: ${longitude}`);
+
+    
+    setRiderLat(latitude);
+    setRiderLong(longitude);
+
   }
 
   //method to convert the Data into dd-mm-yyyy format
@@ -101,6 +169,7 @@ const RiderViewOrderDetailScreen = ({ navigation, route }) => {
 
   // calculate the total cost and set the all requried variables on initial render
   useEffect(() => {
+    getCurrentLocationRider();
     setError("");
     setAlertType("error");
     if (orderDetail?.status == "delivered") {
@@ -111,11 +180,13 @@ const RiderViewOrderDetailScreen = ({ navigation, route }) => {
     setValue(orderDetail?.status);
     setAddress(
       orderDetail?.country +
-        ", " +
-        orderDetail?.city +
-        ", " +
-        orderDetail?.shippingAddress
+      ", " +
+      orderDetail?.city +
+      ", " +
+      orderDetail?.shippingAddress
     );
+    setCustomerLat(orderDetail?.customerLatitude);
+    setCustomerLong(orderDetail?.customerLongitude);
     setTotalCost(
       orderDetail?.items.reduce((accumulator, object) => {
         return (accumulator + object.price) * object.quantity;
@@ -168,6 +239,20 @@ const RiderViewOrderDetailScreen = ({ navigation, route }) => {
           </Text>
           <Text style={styles.secondarytextSm}>{address}</Text>
           <Text style={styles.secondarytextSm}>{orderDetail?.zipcode}</Text>
+        </View>
+        <View style={{}}>
+          <CustomButton
+            text={"View Location"}
+            onPress={() => {
+              setTimeout(() => {
+                setLat(customerLat);
+                setLong(customerLong);
+                handleMoveToMarker(customerLat,customerLong)
+              }, 1);
+
+              setModalVisible(true)
+            }}
+          />
         </View>
         <View>
           <Text style={styles.containerNameText}>Order Info</Text>
@@ -255,6 +340,110 @@ const RiderViewOrderDetailScreen = ({ navigation, route }) => {
           )}
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.modelBody}>
+
+          <View style={styles.modelAddressContainer}>
+
+
+            <MapView
+              ref={mapRef}
+              style={{ width: 300, height: 300, borderRadius: 20, margin: 10 }}
+
+              initialRegion={{
+                latitude: lat,
+                longitude: long,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+              // toolbarEnabled={DirectionButton}
+            >
+              { 1==0 ?<Polyline
+              coordinates={[{ latitude: customerLat, longitude: customerLong },
+              { latitude: riderLat, longitude: riderLong }]}
+              strokeColor="yellow"
+              strokeWidth={6}
+              title="Customer location"
+            description="Destination"
+              />: null}
+
+          {/* <MapViewDirections
+          origin={{latitude: lat, longitude: long}}
+          destination={{latitude: lat+0.2, longitude: long+0.2}}
+          apikey={GOOGLE_API_KEY}
+          strokeWidth={4}
+          strokeColor="#111111"
+        /> */}
+
+        
+
+              <Marker
+            coordinate={{ latitude: customerLat, longitude: customerLong }}
+            title="Customer location"
+            description="Destination"
+            onPress={()=>{
+              setDirectionButton(true);
+            }}
+            ><Ionicons name="people" size={30} color="#900" /></Marker>
+
+
+            <Marker
+            coordinate={{ latitude: riderLat, longitude: riderLong  }}
+            title="My location"
+            description="Source"
+            onPress={()=>{
+              setDirectionButton(false);
+            }}
+            ><FontAwesome name="motorcycle" size={30} color="blue" /></Marker>
+
+            </MapView>
+
+            <Text style={{fontSize:10,margin:10}}>Click on <Ionicons name="people" size={12} color="#900" /> Customer Location and then press  <FontAwesome5 name="directions" size={12} color="#4485f5" /> Navigation icon to see route to Customer Location from Your location.</Text>
+
+            <CustomButton
+              onPress={() => {
+                setLat(customerLat);
+                setLong(customerLong);
+                setTimeout(() => {
+                  handleMoveToMarker(customerLat,customerLong)
+                }, 1);;
+              }}
+              text={"View Customer Location"}
+            />
+
+            <CustomButton
+              onPress={() => {
+                getCurrentLocation();
+              }}
+              text={"View My Location"}
+            />
+
+            {/* <CustomButton
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+              text={"View Distance "}
+            /> */}
+
+
+            <CustomButton
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+              text={"close"}
+            />
+
+          </View>
+
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -402,4 +591,25 @@ const styles = StyleSheet.create({
   emptyView: {
     height: 20,
   },
+  modelBody: {
+    flex: 1,
+    display: "flex",
+    flexL: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modelAddressContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    width: 320,
+
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    elevation: 3,
+  },
 });
+
+

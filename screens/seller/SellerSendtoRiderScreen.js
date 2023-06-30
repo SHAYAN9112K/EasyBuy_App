@@ -103,11 +103,11 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
       requestOptions1
     )
       .then((response) => response.json())
-      .then((result) => {navigate
+      .then((result) => {
         if (result.success == true) {
           setIsloading(false);
           alert("order Sent to Rider Succesfully");
-          navigation.navigate("SellerDashboardScreen")
+          navigation.navigate("SellerDashboardScreen",{authUser:authUser})
         }
       })
       .catch((error) => {

@@ -302,7 +302,7 @@ const HomeScreen = ({ navigation, route }) => {
                     onRefresh={handleOnRefresh}
                   />
                 }
-                inverted={true}
+                inverted={false}
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
                 horizontal={true}
