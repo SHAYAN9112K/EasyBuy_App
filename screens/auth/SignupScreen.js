@@ -55,6 +55,35 @@ const SignupScreen = ({ navigation }) => {
 
   //method to post the user data to server for user signup using API call
   const signUpHandle = () => {
+
+    const passwordRegex =
+    /^(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z0-9!@#$%^&*]{8,}$/;
+
+
+    if (!passwordRegex.test(password)) {
+      if (!/(?=.*[!@#$%^&*])/.test(password)) {
+        return setError(
+          "Password should contain at least one special character"
+        );
+      }
+
+      if (!/(?=.*[a-z])/.test(password)) {
+        return setError(
+          "Password should contain at least one lowercase letter"
+        );
+      }
+
+      if (!/(?=.*[A-Z])/.test(password)) {
+        return setError(
+          "Password should contain at least one uppercase letter"
+        );
+      }
+
+      if (!/(?=.*\d)/.test(password)) {
+        return setError("Password should contain at least one digit");
+      }
+    }
+
     if (selectedUserType == "") {
       return setError("Please Select User Type");
     }
