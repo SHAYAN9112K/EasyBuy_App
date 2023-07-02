@@ -8,6 +8,7 @@ import {
   FlatList,
   RefreshControl,
   Dimensions,
+  Button
 } from "react-native";
 import React, { useState, useEffect } from "react";
 
@@ -23,9 +24,33 @@ import ProductCard from "../../components/ProductCard/ProductCard";
 import CustomInput from "../../components/CustomInput";
 
 const CategoriesScreen = ({ navigation, route }) => {
-  const { categoryID } = route.params;
+  var { categoryID } = route.params;
 
 
+  const category = [
+    {
+      _id: "62fe244f58f7aa8230817f89",
+      title: "Garments",
+      image: require("../../assets/icons/garments.png"),
+    },
+    {
+      _id: "62fe243858f7aa8230817f86",
+      title: "Electornics",
+      image: require("../../assets/icons/electronics.png"),
+    },
+    {
+      _id: "62fe241958f7aa8230817f83",
+      title: "Cosmentics",
+      image: require("../../assets/icons/cosmetics.png"),
+    },
+    {
+      _id: "62fe246858f7aa8230817f8c",
+      title: "Groceries",
+      image: require("../../assets/icons/grocery.png"),
+    },
+  ];
+
+  
   const [isLoading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [refeshing, setRefreshing] = useState(false);
@@ -45,6 +70,8 @@ const CategoriesScreen = ({ navigation, route }) => {
   var payload = [];
 
   //Method : Fetch category data from using API call and store for later you in code
+
+  const [selectedTab, setSelectedTab] = useState(null);
   const fetchCategories = () => {
     var myHeaders = new Headers();
     myHeaders.append("x-auth-token");
@@ -67,6 +94,7 @@ const CategoriesScreen = ({ navigation, route }) => {
             payload.push(obj);
           });
           setItems(payload);
+          setSelectedTab(payload[0])
           setError("");
         } else {
           setError(result.message);
@@ -79,6 +107,8 @@ const CategoriesScreen = ({ navigation, route }) => {
         console.log("error", error);
       });
   };
+
+  
 
   //get the dimenssions of active window
   const [windowWidth, setWindowWidth] = useState(
@@ -113,29 +143,8 @@ const CategoriesScreen = ({ navigation, route }) => {
     method: "GET",
     redirect: "follow",
   };
-  const category = [
-    {
-      _id: "62fe244f58f7aa8230817f89",
-      title: "Garments",
-      image: require("../../assets/icons/garments.png"),
-    },
-    {
-      _id: "62fe243858f7aa8230817f86",
-      title: "Electornics",
-      image: require("../../assets/icons/electronics.png"),
-    },
-    {
-      _id: "62fe241958f7aa8230817f83",
-      title: "Cosmentics",
-      image: require("../../assets/icons/cosmetics.png"),
-    },
-    {
-      _id: "62fe246858f7aa8230817f8c",
-      title: "Groceries",
-      image: require("../../assets/icons/grocery.png"),
-    },
-  ];
-  const [selectedTab, setSelectedTab] = useState(category[0]);
+  
+
 
   //method to fetch the product from server using API call
   const fetchProduct = () => {
@@ -191,6 +200,8 @@ const CategoriesScreen = ({ navigation, route }) => {
     fetchProduct();
     fetchCategories();
   }, []);
+
+
 
   return (
     <View style={styles.container}>
@@ -253,7 +264,7 @@ const CategoriesScreen = ({ navigation, route }) => {
         />
 
         {foundItems.filter(
-          (product) => product?.category?._id === selectedTab?._id
+          (product) => product?.category?._id === selectedTab?.value
         ).length === 0 ? (
           <View style={styles.noItemContainer}>
             <View
@@ -279,7 +290,7 @@ const CategoriesScreen = ({ navigation, route }) => {
         ) : (
           <FlatList
             data={foundItems.filter(
-              (product) => product?.category?._id === selectedTab?._id
+              (product) => product?.category?._id === selectedTab?.value
             )}
             refreshControl={
               <RefreshControl
@@ -300,7 +311,7 @@ const CategoriesScreen = ({ navigation, route }) => {
                 <ProductCard
                   cardSize={"large"}
                   name={product.title}
-                  image={`${network.serverip}/uploads/${product.image}`}
+                  image={`${product.image}`}
                   price={product.price}
                   quantity={product.quantity}
                   onPress={() => handleProductPress(product)}
