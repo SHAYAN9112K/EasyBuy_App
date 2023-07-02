@@ -11,8 +11,8 @@ const UserProfileCard = ({ name, email ,img}) => {
       <View style={styles.avatarContainer}>
         {/* <Icon name="person" size={80} color={colors.primary} /> */}
         <Image
-            source={{ uri: img}}
-            style={{ height: "100%", width:"100%", resizeMode: "contain",borderRadius: 20, }}
+            source={img}
+            style={{ height: "100%", width:"100%", resizeMode: "contain",borderRadius: 20,borderColor:'black',borderWidth:0.5}}
           />
       </View>
       <View style={styles.infoContainer}>

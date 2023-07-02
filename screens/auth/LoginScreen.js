@@ -6,7 +6,9 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  ImageBackground,
+  Dimensions
 } from "react-native";
 
 import React, { useState } from "react";
@@ -20,7 +22,7 @@ import ProgressDialog from "react-native-progress-dialog";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
-
+const { width, height } = Dimensions.get('window');
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -128,6 +130,11 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
+    <ImageBackground
+      source={require('../../image/backgroundImg.jpg')}
+      style={styles.background}
+      opacity={0.5}
+    >
     <InternetConnectionAlert onChange={(connectionState) => {}}>
       <KeyboardAvoidingView
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -205,6 +212,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </KeyboardAvoidingView>
     </InternetConnectionAlert>
+    </ImageBackground>
   );
 };
 
@@ -214,7 +222,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirecion: "row",
-    backgroundColor: colors.light,
+    // backgroundColor: colors.light,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -267,7 +275,7 @@ const styles = StyleSheet.create({
   buttomContainer: {
     display: "flex",
     justifyContent: "center",
-    width: "100%",
+    width: width-40,
   },
   bottomContainer: {
     marginTop: 10,
@@ -293,5 +301,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "800",
     color: colors.muted,
+  },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

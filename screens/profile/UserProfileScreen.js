@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import OptionList from "../../components/OptionList/OptionList";
 import { colors } from "../../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import profilePlaceholder from "../../assets/profilePlaceholder/profilePlaceholder.png";
 
 const UserProfileScreen = ({ navigation, route }) => {
   const [userInfo, setUserInfo] = useState({});
@@ -24,24 +25,24 @@ const UserProfileScreen = ({ navigation, route }) => {
     }
   };
 
-  const getRandomImage=async()=>{
-    await fetch('https://randomuser.me/api/')
-    .then(response => response.json())
-    .then(data => {
-      // Use the data from the API
-      console.log(data.results[0].picture.large);
-      setImg(data.results[0].picture.large)
-    })
-    .catch(error => {
-      // Handle errors
-      console.error(error);
-    });
-  }
+  // const getRandomImage=async()=>{
+  //   await fetch('https://randomuser.me/api/')
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     // Use the data from the API
+  //     console.log(data.results[0].picture.large);
+  //     setImg(data.results[0].picture.large)
+  //   })
+  //   .catch(error => {
+  //     // Handle errors
+  //     console.error(error);
+  //   });
+  // }
 
   // covert  the user to Json object on initial render
   useEffect(() => {
     convertToJSON(user);
-    getRandomImage();
+    // getRandomImage();
   }, []);
   return (
     <View style={styles.container}>
@@ -56,7 +57,7 @@ const UserProfileScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.UserProfileCardContianer}>
         <UserProfileCard
-          img={img}
+          img={profilePlaceholder}
           name={userInfo?.name}
           email={userInfo?.email}
         />

@@ -7,6 +7,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
+  ImageBackground
 } from "react-native";
 import React, { useState } from "react";
 import { colors, network } from "../../constants";
@@ -18,7 +20,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
 import DropDownPicker from "react-native-dropdown-picker";
-
+const { width, height } = Dimensions.get('window');
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -111,14 +113,22 @@ const SignupScreen = ({ navigation }) => {
     fetch(network.serverip + "/register", requestOptions) // API call
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
+        console.log("sdsd",result.message);
+        setError(result.message);
+        console.log("sdsd",result.message);
         if (result.data["email"] == email) {
           navigation.navigate("drawers");
         }
+        
       })
       .catch((error) => console.log("error", setError(error.message)));
   };
   return (
+    <ImageBackground
+      source={require('../../image/backgroundImg.jpg')}
+      style={styles.background}
+      opacity={0.5}
+    >
     <InternetConnectionAlert
       onChange={(connectionState) => {
         console.log("Connection State: ", connectionState);
@@ -241,6 +251,7 @@ const SignupScreen = ({ navigation }) => {
         </View>
       </KeyboardAvoidingView>
     </InternetConnectionAlert>
+    </ImageBackground>
   );
 };
 
@@ -249,7 +260,7 @@ export default SignupScreen;
 const styles = StyleSheet.create({
   container: {
     flexDirecion: "row",
-    backgroundColor: colors.light,
+    // backgroundColor: colors.light,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -326,5 +337,11 @@ const styles = StyleSheet.create({
   screenNameParagraph: {
     marginTop: 5,
     fontSize: 15,
+  },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
 });
