@@ -138,7 +138,7 @@ const LoginScreen = ({ navigation }) => {
     </TouchableOpacity>
           <View style={styles.welconeContainer}>
             <View>
-              <Text style={styles.welcomeText}>Welcome to EasyBuy</Text>
+              <Text style={styles.welcomeText}>Welcome to Swift Multiservice</Text>
               <Text style={styles.welcomeParagraph}>
                 make your ecommerce easy
               </Text>
