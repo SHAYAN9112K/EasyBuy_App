@@ -35,10 +35,9 @@ const dateFormat = (datex) => {
   return newDate;
 };
 
-const OrderList = ({ item, onPress }) => {
+const OrderRequest = ({ item, onPress, onPress2 }) => {
   const [totalCost, setTotalCost] = useState(0);
   const [quantity, setQuantity] = useState(0);
-  // const [riderStatuses, setRiderStatuses] = useState(true);
 
   useEffect(() => {
     let packageItems = 0;
@@ -51,7 +50,6 @@ const OrderList = ({ item, onPress }) => {
         return (accumulator + object.price) * object.quantity;
       }, 0)
     );
-    // setRiderStatuses(item?.items.riderStatus);
   }, []);
 
   return (
@@ -79,39 +77,47 @@ const OrderList = ({ item, onPress }) => {
       )}
       <View style={styles.innerRow}>
         <Text style={styles.secondaryText}>Quantity : {quantity}</Text>
-        <Text style={styles.secondaryText}>Total Amount : {totalCost}$</Text>
-        {/* <Text style={styles.secondaryText}>RiderStatus : {riderStatuses}</Text> */}
+        <Text style={styles.secondaryTextTotal}>
+          Total Amount : {totalCost}$
+        </Text>
       </View>
+      {/* <TouchableOpacity style={styles.detailButton} onPress={onPress}>
+        <Text>Details</Text>
+      </TouchableOpacity> */}
       <View style={styles.innerRow}>
         <TouchableOpacity style={styles.detailButton} onPress={onPress}>
-          <Text>Details</Text>
+          <Text style={{ color: colors.white }}>Accept</Text>
         </TouchableOpacity>
-        <Text style={styles.secondaryText}>{item?.status}</Text>
+        <TouchableOpacity style={styles.detailButton2} onPress={onPress2}>
+          <Text>Reject</Text>
+        </TouchableOpacity>
+        {/* <Text style={styles.secondaryText}>{item?.status}</Text> */}
       </View>
     </View>
   );
 };
 
-export default OrderList;
+export default OrderRequest;
 
 const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
-    alignItems: "center",
+    // alignItems: "center",
     width: "100%",
     height: "auto",
     backgroundColor: colors.white,
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    elevation: 1,
+    // elevation: 1,
   },
   innerRow: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+
+    // justifyContent: "center",
     alignItems: "center",
     width: "100%",
   },
@@ -130,13 +136,18 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontWeight: "bold",
   },
+  secondaryTextTotal: {
+    paddingLeft: 50,
+  },
   timeDateContainer: {
+    paddingLeft: 50,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
   detailButton: {
+    // marginLeft: 30,
     marginTop: 10,
     display: "flex",
     justifyContent: "center",
@@ -146,6 +157,21 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: colors.muted,
     color: colors.muted,
+    backgroundColor: colors.secondary,
     width: 100,
+  },
+  detailButton2: {
+    marginLeft: 50,
+    marginTop: 10,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 5,
+    borderColor: colors.muted,
+    backgroundColor: colors.primary,
+    width: 100,
+    // textColor: colors.white,
   },
 });

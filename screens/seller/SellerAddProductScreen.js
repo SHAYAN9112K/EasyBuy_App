@@ -35,7 +35,6 @@ const SellerAddProductScreen = ({ navigation, route }) => {
   const [user, setUser] = useState({});
   const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
   const [statusDisable, setStatusDisable] = useState(false);
   const [items, setItems] = useState([
     { label: "Pending", value: "pending" },
@@ -114,7 +113,7 @@ const SellerAddProductScreen = ({ navigation, route }) => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
+        console.log("Image Uplaoded: ", result);
       })
       .catch((error) => console.log("error", error));
   };
@@ -127,7 +126,7 @@ const SellerAddProductScreen = ({ navigation, route }) => {
     description: description,
     category: category,
     quantity: quantity,
-    sellerEmail:authUser.email
+    sellerEmail: authUser.user,
   });
 
   var requestOptions = {
@@ -146,9 +145,7 @@ const SellerAddProductScreen = ({ navigation, route }) => {
       aspect: [1, 1],
       quality: 0.5,
     });
-
     if (!result.cancelled) {
-      console.log(result);
       setImage(result.uri);
       upload();
     }
@@ -156,13 +153,17 @@ const SellerAddProductScreen = ({ navigation, route }) => {
 
   //Method for imput validation and post data to server to insert product using API call
   const addProductHandle = () => {
+    console.log("Add Product");
+    console.log(authUser);
+    console.log(route.params);
+    console.log("USER: ", user);
     setIsloading(true);
 
-    //[check validation] -- Start
+    // VALIDATION
     if (title == "") {
       setError("Please enter the product title");
       setIsloading(false);
-    } else if (price == 0) {
+    } else if (price <= 0) {
       setError("Please enter the product price");
       setIsloading(false);
     } else if (quantity <= 0) {
@@ -172,11 +173,10 @@ const SellerAddProductScreen = ({ navigation, route }) => {
       setError("Please upload the product image");
       setIsloading(false);
     } else {
-      //[check validation] -- End
       fetch(network.serverip + "/product", requestOptions)
         .then((response) => response.json())
         .then((result) => {
-          console.log(result);
+          console.log("Response Returned: ", result);
           if (result.success == true) {
             setIsloading(false);
             setAlertType("success");
@@ -194,8 +194,9 @@ const SellerAddProductScreen = ({ navigation, route }) => {
 
   //call the fetch functions initial render
   useEffect(() => {
+    console.log("Initial UseEffect");
     fetchCategories();
-    console.log(categories);
+    console.log("CATEGORIES: ", categories);
   }, []);
 
   return (
@@ -218,7 +219,7 @@ const SellerAddProductScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameText}>Add Product</Text>
+          <Text style={styles.screenNameText}>Add Ehtiii</Text>
         </View>
         <View>
           <Text style={styles.screenNameParagraph}>Add product details</Text>

@@ -19,6 +19,7 @@ import ProgressDialog from "react-native-progress-dialog";
 
 const SellerViewProductScreen = ({ navigation, route }) => {
   const { authUser } = route.params;
+  const [user, setUser] = useState(authUser);
   const [isloading, setIsloading] = useState(false);
   const [refeshing, setRefreshing] = useState(false);
   const [alertType, setAlertType] = useState("error");
@@ -28,6 +29,7 @@ const SellerViewProductScreen = ({ navigation, route }) => {
   const [products, setProducts] = useState([]);
   const [foundItems, setFoundItems] = useState([]);
   const [filterItem, setFilterItem] = useState("");
+  const [allReviews, setAllReviews] = useState([]);
 
   var myHeaders = new Headers();
   myHeaders.append("x-auth-token", authUser.token);
@@ -95,8 +97,12 @@ const SellerViewProductScreen = ({ navigation, route }) => {
 
   //method the fetch the product data from server using API call
   const fetchProduct = () => {
+    console.log("helloo" + authUser.email);
     setIsloading(true);
-    fetch(`${network.serverip}/sellerProducts/${authUser.email}`, ProductListRequestOptions)
+    fetch(
+      `${network.serverip}/sellerProducts/${authUser.email}`,
+      ProductListRequestOptions
+    )
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -157,7 +163,7 @@ const SellerViewProductScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("addproduct", { authUser: authUser });
+            navigation.navigate("addproduct", { authUser: user });
           }}
         >
           <AntDesign name="plussquare" size={30} color={colors.muted} />
@@ -208,6 +214,14 @@ const SellerViewProductScreen = ({ navigation, route }) => {
                 }}
                 onPressDelete={() => {
                   showConfirmDialog(product._id);
+                }}
+                onPressViewReview={() => {
+                  navigation.navigate("SellerReviewScreen", {
+                    product: product,
+                    authUser: authUser,
+                  });
+
+                  // showConfirmDialog(product._id);
                 }}
               />
             );

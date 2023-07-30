@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
 
 import React, { useState } from "react";
@@ -22,7 +22,7 @@ import ProgressDialog from "react-native-progress-dialog";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,26 +94,40 @@ const LoginScreen = ({ navigation }) => {
           if (result?.data?.userType == "USER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an RIDER please navigate to USER Login");
+            return setError(
+              "You are not an RIDER please navigate to USER Login"
+            );
           }
           if (result?.data?.userType == "SELLER") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an RIDER please navigate to SELLER Login");
+            return setError(
+              "You are not an RIDER please navigate to SELLER Login"
+            );
           }
           if (result?.data?.userType == "ADMIN") {
             //check the user type if the type is ADMIN then navigate to Dashboard else navigate to User Home
             setIsloading(false);
-            return setError("You are not an RIDER please navigate to ADMIN Login");
+            return setError(
+              "You are not an RIDER please navigate to ADMIN Login"
+            );
           }
-          if (result?.data?.userType == "RIDER"){
+          if (result?.data?.userType == "RIDER") {
             if (result?.data?.accountStatus == "ban") {
               setIsloading(false);
               return setError("You are Currently Banned by Admin");
             }
+            if (!result?.data?.verified) {
+              setIsloading(false);
+              return setError(
+                "Your verification is currently in process from the Admin"
+              );
+            }
             _storeData(result.data);
             setIsloading(false);
-            navigation.replace("RiderDashboardScreen", { authUser: result.data });
+            navigation.replace("RiderDashboardScreen", {
+              authUser: result.data,
+            });
           }
         } else {
           setIsloading(false);
@@ -128,87 +142,106 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../../image/backgroundImg.jpg')}
+      source={require("../../image/backgroundImg.jpg")}
       style={styles.background}
       opacity={0.5}
     >
-    <InternetConnectionAlert onChange={(connectionState) => {}}>
-      <KeyboardAvoidingView
-        // behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <ScrollView style={{ flex: 1, width: "100%" }}>
-          <ProgressDialog visible={isloading} label={"Login ..."} />
-          <StatusBar></StatusBar>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
-      <Ionicons name="menu-outline" size={24} color="black" />
-    </TouchableOpacity>
-          <View style={styles.welconeContainer}>
-            <View>
-              <Text style={styles.welcomeText}>Welcome to Swift Multiservice</Text>
-              <Text style={styles.welcomeParagraph}>
-                make your ecommerce easy
-              </Text>
-            </View>
-            <View>
-              <Image style={styles.logo} source={header_logo} />
-            </View>
-          </View>
-          <View style={styles.screenNameContainer}>
-            <Text style={styles.screenNameText}>Rider Login</Text>
-          </View>
-          <View style={styles.formContainer}>
-            <CustomAlert message={error} type={"error"} />
-            <CustomInput
-              value={email}
-              setValue={setEmail}
-              placeholder={"Username"}
-              placeholderTextColor={colors.muted}
-              radius={5}
-            />
-            <View style={{flexDirection:"row" ,justifyContent:"space-between" }}>
-            <PasswordInput
-              value={password}
-              setValue={setPassword}
-              secureTextEntry={passShow}
-              placeholder={"Password"}
-              placeholderTextColor={colors.muted}
-              radius={5}
-            />
-            <TouchableOpacity onPress={()=>{setPassShow(!passShow)}}>
-            {passShow
-            ?
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye-off" size={25} color={colors.muted} />
-            :
-            <Ionicons style={{marginVertical:15,marginLeft:15}} name="eye" size={25} color={colors.muted} />
-            }
-            
+      <InternetConnectionAlert onChange={(connectionState) => {}}>
+        <KeyboardAvoidingView
+          // behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
+        >
+          <ScrollView style={{ flex: 1, width: "100%" }}>
+            <ProgressDialog visible={isloading} label={"Login ..."} />
+            <StatusBar></StatusBar>
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
+              <Ionicons name="menu-outline" size={24} color="black" />
             </TouchableOpacity>
+            <View style={styles.welconeContainer}>
+              <View>
+                <Text style={styles.welcomeText}>
+                  Welcome to Swift Multiservice
+                </Text>
+                <Text style={styles.welcomeParagraph}>
+                  make your ecommerce easy
+                </Text>
+              </View>
+              <View>
+                <Image style={styles.logo} source={header_logo} />
+              </View>
             </View>
-            <View style={styles.forgetPasswordContainer}>
-              <Text
-                onPress={() => navigation.navigate("forgetpassword")}
-                style={styles.ForgetText}
+            <View style={styles.screenNameContainer}>
+              <Text style={styles.screenNameText}>Rider Login</Text>
+            </View>
+            <View style={styles.formContainer}>
+              <CustomAlert message={error} type={"error"} />
+              <CustomInput
+                value={email}
+                setValue={setEmail}
+                placeholder={"Username"}
+                placeholderTextColor={colors.muted}
+                radius={5}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
               >
-                Forget Password?
-              </Text>
+                <PasswordInput
+                  value={password}
+                  setValue={setPassword}
+                  secureTextEntry={passShow}
+                  placeholder={"Password"}
+                  placeholderTextColor={colors.muted}
+                  radius={5}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    setPassShow(!passShow);
+                  }}
+                >
+                  {passShow ? (
+                    <Ionicons
+                      style={{ marginVertical: 15, marginLeft: 15 }}
+                      name="eye-off"
+                      size={25}
+                      color={colors.muted}
+                    />
+                  ) : (
+                    <Ionicons
+                      style={{ marginVertical: 15, marginLeft: 15 }}
+                      name="eye"
+                      size={25}
+                      color={colors.muted}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              <View style={styles.forgetPasswordContainer}>
+                <Text
+                  onPress={() => navigation.navigate("forgetpassword")}
+                  style={styles.ForgetText}
+                >
+                  Forget Password?
+                </Text>
+              </View>
             </View>
+          </ScrollView>
+          <View style={styles.buttomContainer}>
+            <CustomButton text={"Login"} onPress={loginHandle} />
           </View>
-        </ScrollView>
-        <View style={styles.buttomContainer}>
-          <CustomButton text={"Login"} onPress={loginHandle} />
-        </View>
-        <View style={styles.bottomContainer}>
-          <Text>Don't have an account?</Text>
-          <Text
-            onPress={() => navigation.navigate("signup")}
-            style={styles.signupText}
-          >
-            signup
-          </Text>
-        </View>
-      </KeyboardAvoidingView>
-    </InternetConnectionAlert>
+          <View style={styles.bottomContainer}>
+            <Text>Don't have an account?</Text>
+            <Text
+              onPress={() => navigation.navigate("signup")}
+              style={styles.signupText}
+            >
+              signup
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
+      </InternetConnectionAlert>
     </ImageBackground>
   );
 };
@@ -272,7 +305,7 @@ const styles = StyleSheet.create({
   buttomContainer: {
     display: "flex",
     justifyContent: "center",
-    width: width-40,
+    width: width - 40,
   },
   bottomContainer: {
     marginTop: 10,
@@ -301,8 +334,8 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+    resizeMode: "cover",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

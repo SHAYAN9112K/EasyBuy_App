@@ -82,6 +82,22 @@ const DashboardScreen = ({ navigation, route }) => {
               type: "muted",
               screenName: "viewcategories",
             },
+            {
+              id: 5,
+              title: "Rider Requests",
+              value: result.data?.categoriesCount,
+              iconName: "md-square",
+              type: "muted",
+              screenName: "ViewRidersRequests",
+            },
+            // {
+            //   id: 6,
+            //   title: "Rider Requests",
+            //   value: result.data?.categoriesCount,
+            //   iconName: "md-square",
+            //   type: "muted",
+            //   screenName: "ViewRidersScreen",
+            // },
           ]);
           setError("");
           setIsloading(false);
@@ -142,7 +158,7 @@ const DashboardScreen = ({ navigation, route }) => {
           <MaterialCommunityIcons name="menu-right" size={30} color="black" />
           <Text style={styles.headingText}>Welcome, Admin</Text>
         </View>
-        <View style={{ height: 370 }}>
+        <View style={{ height: 400 }}>
           {data && (
             <ScrollView
               refreshControl={
@@ -174,7 +190,7 @@ const DashboardScreen = ({ navigation, route }) => {
         </View>
         <View style={{ flex: 1, width: "100%" }}>
           <ScrollView style={styles.actionContainer}>
-          <OptionList
+            <OptionList
               text={"Categories"}
               Icon={Ionicons}
               iconName={"menu"}

@@ -12,6 +12,7 @@ const ProductList = ({
   onPressView,
   onPressEdit,
   onPressDelete,
+  onPressViewReview,
 }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPressView}>
@@ -46,6 +47,14 @@ const ProductList = ({
         >
           <MaterialIcons name={"edit"} size={15} color={colors.white} />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionButton, { backgroundColor: colors.secondary }]}
+          onPress={onPressViewReview}
+        >
+          <MaterialIcons name={"edit"} size={15} color={colors.white} />
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={[styles.actionButton, { backgroundColor: colors.danger }]}
           onPress={onPressDelete}

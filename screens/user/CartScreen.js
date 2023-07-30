@@ -43,6 +43,7 @@ const CartScreen = ({ navigation }) => {
   //method to decrease the quantity of the item in(cart) redux
   const decreaseQuantity = (id, quantity) => {
     if (quantity > 1) {
+      alert(id);
       decreaseCartItemQuantity({ id: id, type: "decrease" });
       setRefresh(!refresh);
     }

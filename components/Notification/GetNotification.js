@@ -4,9 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../constants";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const AdminUserList = ({ username, email, onPress, toTime, fromTime }) => {
+const AdminUserList = ({ amount, rider, email }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container1}>
       <View style={styles.profileContainer}>
         <Ionicons
           name="person-circle-outline"
@@ -15,19 +15,23 @@ const AdminUserList = ({ username, email, onPress, toTime, fromTime }) => {
         />
       </View>
       <View style={styles.userInfoContainer}>
-        <Text style={styles.usernameText}>{username}</Text>
-        {toTime && fromTime ? (
-          // <Text style={styles.userEmailText}>{toTime}</Text>
+        {/* <Text style={styles.usernameText}>{username}</Text> */}
+        {/* {toTime && fromTime && ( */}
+        {/* // <Text style={styles.userEmailText}>{toTime}</Text> */}
+        {amount && rider && email ? (
           <View>
-            <Text style={styles.userEmailText}>From: {fromTime}</Text>
+            <Text style={styles.userEmailText}>Status:{rider}</Text>
+            <Text style={styles.userEmailText}>Amount: {amount}</Text>
 
-            <Text style={styles.userEmailText}>To: {toTime}</Text>
+            <Text style={styles.userEmailText}>To: {email}</Text>
           </View>
         ) : (
           <View>
-            <Text style={styles.userEmailText}>Time not given by rider</Text>
+            <Text>No notification avaliable</Text>
           </View>
         )}
+
+        {/* )} */}
 
         {/* // : ( */}
         {/* //   <View> */}
@@ -36,7 +40,7 @@ const AdminUserList = ({ username, email, onPress, toTime, fromTime }) => {
         {/* //   </View> */}
         {/* // )} */}
         {/* <Text style={styles.userEmailText}>{toTime}</Text> */}
-        <Text style={styles.userEmailText}>{email}</Text>
+        {/* <Text style={styles.userEmailText}>{email}</Text> */}
       </View>
     </View>
   );
@@ -48,8 +52,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     marginBottom: 20,
+    // paddingBottom:40,
     alignItems: "center",
     height: 60,
+
     borderRadius: 10,
     marginLeft: 10,
     marginRight: 10,
@@ -96,5 +102,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 5,
     elevation: 2,
+  },
+  container1: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    elevation: 2,
+    marginLeft: 10,
+    marginRight: 10,
+    margin: 5,
+    padding: 5,
   },
 });

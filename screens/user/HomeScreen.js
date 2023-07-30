@@ -65,9 +65,8 @@ const HomeScreen = ({ navigation, route }) => {
   const [userInfo, setUserInfo] = useState({});
   const [searchItems, setSearchItems] = useState([]);
 
-
   const [categories, setCategories] = useState([]);
-  
+
   const [items, setItems] = useState([
     { label: "Category", value: "pending" },
     { label: "Category", value: "shipped" },
@@ -103,10 +102,8 @@ const HomeScreen = ({ navigation, route }) => {
         } else {
           setError(result.message);
         }
-        
       })
       .catch((error) => {
-        
         setError(error.message);
         console.log("error", error);
       });
@@ -177,8 +174,8 @@ const HomeScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <StatusBar></StatusBar>
       <View style={styles.topBarContainer}>
-        <TouchableOpacity disabled>
-          <Ionicons name="menu" size={30} color={colors.muted} />
+        <TouchableOpacity onPress={() => navigation.navigate("notification")}>
+          <Ionicons name="notifications" size={30} color={colors.muted} />
         </TouchableOpacity>
         <View style={styles.topbarlogoContainer}>
           <Image source={easybuylogo} style={styles.logo} />
@@ -306,7 +303,7 @@ const HomeScreen = ({ navigation, route }) => {
                 showsHorizontalScrollIndicator={false}
                 initialNumToRender={5}
                 horizontal={true}
-                data={products.slice(products.length-4)}
+                data={products.slice(products.length - 4)}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item, index }) => (
                   <View

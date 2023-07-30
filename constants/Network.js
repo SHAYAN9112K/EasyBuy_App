@@ -2,7 +2,8 @@
 //   serverip: "https://api-easybuy.herokuapp.com",
 // };
 
-
 export default network = {
-  serverip: "http://localhost:3000",
+  serverip: "https://lead-jelly-fowl.glitch.me/",
+  // https://easybuybackend-production-0b04.up.railway.app",
+  //
 };

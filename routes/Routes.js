@@ -37,6 +37,10 @@ import ViewRidersScreen from "../screens/admin/ViewRidersScreen";
 import CategoriesScreen from "../screens/user/CategoriesScreen";
 import EditCategoryScreen from "../screens/admin/EditCategoryScreen";
 import MyWishlistScreen from "../screens/profile/MyWishlistScreen";
+import ReviewScreen from "../screens/user/Reviews";
+import SellerReveiwScreen from "../screens/seller/SellerReviewScreen";
+import ViewRidersRequests from "../screens/admin/ViewRiderRequests";
+import Notification from "../screens/user/Notification";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,26 +59,63 @@ const Routes = () => {
         <Stack.Screen name="myaccount" component={MyAccountScreen} />
         <Stack.Screen name="mywishlist" component={MyWishlistScreen} />
         <Stack.Screen name="dashboard" component={DashboardScreen} />
-        <Stack.Screen name="SellerDashboardScreen" component={SellerDashboardScreen} />
-        <Stack.Screen name="SellerViewOrdersScreen" component={SellerViewOrdersScreen} />
-        <Stack.Screen name="SellerViewOrderDetailScreen" component={SellerViewOrderDetailScreen} />
-        <Stack.Screen name="SellerEditProductScreen" component={SellerEditProductScreen} />
-        <Stack.Screen name="SellerAddProductScreen" component={SellerAddProductScreen} />
-        <Stack.Screen name="SellerViewProductScreen" component={SellerViewProductScreen} />
-        <Stack.Screen name="SellerSendtoRiderScreen" component={SellerSendtoRiderScreen} />
-        <Stack.Screen name="RiderDashboardScreen" component={RiderDashboardScreen} />
-        <Stack.Screen name="RiderViewOrderDetailScreen" component={RiderViewOrderDetailScreen} />
+        <Stack.Screen
+          name="SellerDashboardScreen"
+          component={SellerDashboardScreen}
+        />
+        <Stack.Screen
+          name="SellerViewOrdersScreen"
+          component={SellerViewOrdersScreen}
+        />
+        <Stack.Screen
+          name="SellerViewOrderDetailScreen"
+          component={SellerViewOrderDetailScreen}
+        />
+        <Stack.Screen
+          name="SellerEditProductScreen"
+          component={SellerEditProductScreen}
+        />
+        <Stack.Screen
+          name="SellerReviewScreen"
+          component={SellerReveiwScreen}
+        />
+        <Stack.Screen
+          name="SellerAddProductScreen"
+          component={SellerAddProductScreen}
+        />
+        <Stack.Screen
+          name="SellerViewProductScreen"
+          component={SellerViewProductScreen}
+        />
+        <Stack.Screen
+          name="SellerSendtoRiderScreen"
+          component={SellerSendtoRiderScreen}
+        />
+        <Stack.Screen
+          name="RiderDashboardScreen"
+          component={RiderDashboardScreen}
+        />
+        <Stack.Screen
+          name="RiderViewOrderDetailScreen"
+          component={RiderViewOrderDetailScreen}
+        />
         <Stack.Screen name="addproduct" component={AddProductScreen} />
         <Stack.Screen name="viewproduct" component={ViewProductScreen} />
         <Stack.Screen name="editproduct" component={EditProductScreen} />
         <Stack.Screen name="tab" component={Tabs} />
         <Stack.Screen name="drawers" component={Drawers} />
+        <Stack.Screen name="review" component={ReviewScreen} />
+
         <Stack.Screen name="cart" component={CartScreen} />
+        <Stack.Screen name="notification" component={Notification} />
         <Stack.Screen name="checkout" component={CheckoutScreen} />
         <Stack.Screen name="orderconfirm" component={OrderConfirmScreen} />
         <Stack.Screen name="productdetail" component={ProductDetailScreen} />
         <Stack.Screen name="vieworder" component={ViewOrdersScreen} />
-        <Stack.Screen name="vieworderdetails" component={ViewOrderDetailScreen} />
+        <Stack.Screen
+          name="vieworderdetails"
+          component={ViewOrderDetailScreen}
+        />
         <Stack.Screen name="myorder" component={MyOrderScreen} />
         <Stack.Screen name="myorderdetail" component={MyOrderDetailScreen} />
         <Stack.Screen name="viewcategories" component={ViewCategoryScreen} />
@@ -82,6 +123,10 @@ const Routes = () => {
         <Stack.Screen name="editcategories" component={EditCategoryScreen} />
         <Stack.Screen name="viewusers" component={ViewUsersScreen} />
         <Stack.Screen name="ViewRidersScreen" component={ViewRidersScreen} />
+        <Stack.Screen
+          name="ViewRidersRequests"
+          component={ViewRidersRequests}
+        />
         <Stack.Screen name="ViewSellersScreen" component={ViewSellersScreen} />
         <Stack.Screen name="categories" component={CategoriesScreen} />
       </Stack.Navigator>

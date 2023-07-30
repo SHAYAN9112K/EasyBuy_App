@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import React, { useState } from "react";
 import { colors, network } from "../../constants";
@@ -127,6 +128,7 @@ const AddProductScreen = ({ navigation, route }) => {
     description: description,
     category: category,
     quantity: quantity,
+    sellerEmail: authUser.email,
   });
 
   var requestOptions = {
@@ -155,6 +157,10 @@ const AddProductScreen = ({ navigation, route }) => {
 
   //Method for imput validation and post data to server to insert product using API call
   const addProductHandle = () => {
+    console.log("Add Product");
+    console.log(authUser.email);
+    console.log(route.params);
+    console.log("USER: ", user.email);
     setIsloading(true);
 
     //[check validation] -- Start
@@ -301,6 +307,7 @@ const AddProductScreen = ({ navigation, route }) => {
       />
       <View style={styles.buttomContainer}>
         <CustomButton text={"Add Product"} onPress={addProductHandle} />
+        <Button onPress={addProductHandle} title="Learn More" color="#841584" />
       </View>
     </KeyboardAvoidingView>
   );

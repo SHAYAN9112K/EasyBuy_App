@@ -23,17 +23,16 @@ const ProductDetailScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
 
   const { addCartItem } = bindActionCreators(actionCreaters, dispatch);
+  const { increaseCartItemQuantity, decreaseCartItemQuantity } =
+    bindActionCreators(actionCreaters, dispatch);
 
   //method to add item to cart(redux)
   const handleAddToCat = (item) => {
-    if(quantity==0){
-      alert("Please Select Quantity")
-    }
-    else{
+    if (quantity == 0) {
+      alert("Please Select Quantity");
+    } else {
       addCartItem(item);
     }
-    
-    
   };
 
   //remove the authUser from async storage and navigate to login
@@ -90,15 +89,18 @@ const ProductDetailScreen = ({ navigation, route }) => {
   };
 
   //method to increase the product quantity
-  const handleIncreaseButton = (quantity) => {
+  const handleIncreaseButton = (id, quantity) => {
+    // alert(id);
     if (avaiableQuantity > quantity) {
+      increaseCartItemQuantity({ id: id, type: "increase" });
       setQuantity(quantity + 1);
     }
   };
 
   //method to decrease the product quantity
-  const handleDecreaseButton = (quantity) => {
+  const handleDecreaseButton = (id, quantity) => {
     if (quantity > 0) {
+      decreaseCartItemQuantity({ id: id, type: "decrease" });
       setQuantity(quantity - 1);
     }
   };
@@ -181,6 +183,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
           setAlertType("error");
           console.log("error", error);
         });
+      alert(product?._id);
       setIsDisbale(false);
     }
   };
@@ -272,7 +275,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 <TouchableOpacity
                   style={styles.counterButtonContainer}
                   onPress={() => {
-                    handleDecreaseButton(quantity);
+                    handleDecreaseButton(product.id, quantity);
                   }}
                 >
                   <Text style={styles.counterButtonText}>-</Text>
@@ -281,14 +284,40 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 <TouchableOpacity
                   style={styles.counterButtonContainer}
                   onPress={() => {
-                    handleIncreaseButton(quantity);
+                    handleIncreaseButton(cartproduct.id, quantity);
                   }}
                 >
                   <Text style={styles.counterButtonText}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
+            {/* <View>
+              <CustomButton
+                text={"Reviews"}
+                onPress={() => {
+                  handleAddToCat(product);
+                }}
+              />
+            </View> */}
+            {/* <View style={styles.productButtonReviewContainer}>
+              {avaiableQuantity > 0 ? (
+                <CustomButton
+                  text={"Reviews"}
+                  onPress={() => {
+                    handleAddToCat(product);
+                  }}
+                />
+              ) : (
+                <CustomButton text={"Out of Stock"} disabled={true} />
+              )}
+            </View> */}
             <View style={styles.productButtonContainer}>
+              <CustomButton
+                text={"Reviews"}
+                onPress={() =>
+                  navigation.navigate("review", { product: product })
+                }
+              />
               {avaiableQuantity > 0 ? (
                 <CustomButton
                   text={"Add to Cart"}
@@ -385,6 +414,22 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
   },
   productButtonContainer: {
+    marginTop: 40,
+    padding: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
+    backgroundColor: colors.white,
+    width: "100%",
+    height: 100,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  productButtonReviewContainer: {
+    marginbottom: 5,
     padding: 20,
     paddingLeft: 40,
     paddingRight: 40,

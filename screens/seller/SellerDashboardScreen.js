@@ -44,11 +44,14 @@ const SellerDashboardScreen = ({ navigation, route }) => {
 
   //method the fetch the statistics from server using API call
   const fetchStats = () => {
-    fetch(`${network.serverip}/sellerdashboard/${authUser.email}`, requestOptions)
+    fetch(
+      `${network.serverip}/sellerdashboard/${authUser.email}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) => {
         if (result.success == true) {
-          console.log("testingss: "+result)
+          console.log("testingss: " + result);
           //set the fetched data to Data state
           setData([
             {
@@ -58,7 +61,7 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               iconName: "md-square",
               type: "warning",
               screenName: "SellerViewProductScreen",
-              status:"all"
+              status: "all",
             },
             {
               id: 2,
@@ -67,7 +70,7 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               iconName: "cart",
               type: "secondary",
               screenName: "SellerViewOrdersScreen",
-              status:"pending"
+              status: "pending",
             },
             {
               id: 3,
@@ -76,7 +79,7 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               iconName: "cart",
               type: "secondary",
               screenName: "SellerViewOrdersScreen",
-              status:"progress"
+              status: "progress",
             },
             {
               id: 4,
@@ -85,8 +88,17 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               iconName: "cart",
               type: "secondary",
               screenName: "SellerViewOrdersScreen",
-              status:"delivered"
+              status: "delivered",
             },
+            // {
+            //   id: 5,
+            //   title: "Reviews",
+            //   value: result.data?.DeliveredOrdersCount,
+            //   iconName: "cart",
+            //   type: "secondary",
+            //   screenName: "SellerViewOrdersScreen",
+            //   status: "reviews",
+            // },
           ]);
           setError("");
           setIsloading(false);
@@ -166,7 +178,10 @@ const SellerDashboardScreen = ({ navigation, route }) => {
                   value={data.value}
                   type={data.type}
                   onPress={() => {
-                    navigation.navigate(data.screenName, { authUser: user , status:data.status});
+                    navigation.navigate(data.screenName, {
+                      authUser: user,
+                      status: data.status,
+                    });
                   }}
                 />
               ))}
@@ -184,10 +199,14 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               Icon={Ionicons}
               iconName={"md-square"}
               onPress={() =>
-                navigation.navigate("SellerViewProductScreen", { authUser: user })
+                navigation.navigate("SellerViewProductScreen", {
+                  authUser: user,
+                })
               }
               onPressSecondary={() =>
-                navigation.navigate("SellerAddProductScreen", { authUser: user })
+                navigation.navigate("SellerAddProductScreen", {
+                  authUser: user,
+                })
               }
               type="morden"
             />
@@ -196,7 +215,10 @@ const SellerDashboardScreen = ({ navigation, route }) => {
               Icon={Ionicons}
               iconName={"cart"}
               onPress={() =>
-                navigation.navigate("SellerViewOrdersScreen", { authUser: user ,status:"all" })
+                navigation.navigate("SellerViewOrdersScreen", {
+                  authUser: user,
+                  status: "all",
+                })
               }
               type="morden"
             />

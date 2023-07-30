@@ -17,6 +17,7 @@ import ProgressDialog from "react-native-progress-dialog";
 import UserList from "../../components/UserList/UserList";
 import RiderList from "../../components/RiderList/RiderList";
 import OptionList from "../../components/OptionList/OptionList";
+import AdminUserList from "../../components/AdminUserList/AdminUserList";
 
 const SellerSendtoRiderScreen = ({ navigation, route }) => {
   const [name, setName] = useState("");
@@ -53,7 +54,7 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
       redirect: "follow",
     };
     setIsloading(true);
-    fetch(`${network.serverip}/seller/getRiders`, requestOptions)
+    fetch(`${network.serverip}/seller/ridersGet`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -87,8 +88,8 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
     myHeaders1.append("Content-Type", "application/json");
 
     var raw1 = JSON.stringify({
-      riderEmail:selectedRider.email,
-      status:"Sent To Rider"
+      riderEmail: selectedRider.email,
+      status: "Sent To Rider",
     });
 
     var requestOptions1 = {
@@ -107,7 +108,7 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
         if (result.success == true) {
           setIsloading(false);
           alert("order Sent to Rider Succesfully");
-          navigation.navigate("SellerDashboardScreen",{authUser:authUser})
+          navigation.navigate("SellerDashboardScreen", { authUser: authUser });
         }
       })
       .catch((error) => {
@@ -115,7 +116,7 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
         setError(error.message);
         console.log("errorss", error);
       });
-  }
+  };
 
   //method to filer the orders for by title [search bar]
   const filter = () => {
@@ -189,14 +190,19 @@ const SellerSendtoRiderScreen = ({ navigation, route }) => {
         ) : (
           foundItems.map((item, index) => (
             <View style={styles.container1}>
-              <RiderList
+              <AdminUserList
                 key={Math.random()}
                 username={item?.name}
                 email={item?.email}
+                toTime={item?.toTime}
+                fromTime={item?.fromTime}
                 usertype={item?.userType}
-              // onPress={{}}
+                // onPress={{}}
               />
-              <TouchableOpacity style={styles.actionButton} onPress={() => handleSend(item)}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => handleSend(item)}
+              >
                 <Text style={{ color: colors.white }}>Send</Text>
               </TouchableOpacity>
             </View>
@@ -274,7 +280,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     margin: 5,
-    paddingRight: 10
+    paddingRight: 10,
   },
   actionButton: {
     display: "flex",

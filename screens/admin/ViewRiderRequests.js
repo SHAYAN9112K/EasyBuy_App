@@ -17,7 +17,7 @@ import ProgressDialog from "react-native-progress-dialog";
 import UserList from "../../components/UserList/UserList";
 import AdminUserList from "../../components/AdminUserList/AdminUserList";
 
-const ViewRidersScreen = ({ navigation, route }) => {
+const ViewRidersRequests = ({ navigation, route }) => {
   const [name, setName] = useState("");
   const { authUser } = route.params;
   const [user, setUser] = useState({});
@@ -52,7 +52,7 @@ const ViewRidersScreen = ({ navigation, route }) => {
       redirect: "follow",
     };
     setIsloading(true);
-    fetch(`${network.serverip}/admin/riders`, requestOptions)
+    fetch(`${network.serverip}/admin/ridersRequest`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -118,7 +118,7 @@ const ViewRidersScreen = ({ navigation, route }) => {
       });
   };
 
-  const handleBan = async (selectedRider) => {
+  const handleAccept = async (selectedRider) => {
     setIsloading(true);
 
     var myHeaders1 = new Headers();
@@ -126,7 +126,7 @@ const ViewRidersScreen = ({ navigation, route }) => {
     myHeaders1.append("Content-Type", "application/json");
 
     var raw1 = JSON.stringify({
-      accountStatus: "ban",
+      verified: true,
     });
 
     var requestOptions1 = {
@@ -137,7 +137,7 @@ const ViewRidersScreen = ({ navigation, route }) => {
     };
 
     await fetch(
-      `${network.serverip}/admin/banPerson?id=${selectedRider._id}`,
+      `${network.serverip}/admin/acceptAllRiderRequests?id=${selectedRider._id}`,
       requestOptions1
     )
       .then((response) => response.json())
@@ -230,7 +230,7 @@ const ViewRidersScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.screenNameContainer}>
         <View>
-          <Text style={styles.screenNameText}>View Users</Text>
+          <Text style={styles.screenNameText}>View Requests</Text>
         </View>
         <View>
           <Text style={styles.screenNameParagraph}>View all Users</Text>
@@ -258,8 +258,6 @@ const ViewRidersScreen = ({ navigation, route }) => {
               <AdminUserList
                 key={Math.random()}
                 username={item?.name}
-                toTime={item?.toTime}
-                fromTime={item?.fromTime}
                 email={item?.email}
                 usertype={item?.userType}
                 // onPress={{}}
@@ -267,14 +265,14 @@ const ViewRidersScreen = ({ navigation, route }) => {
               <View
                 style={{ flexDirection: "row", justifyContent: "space-evenly" }}
               >
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.actionButton}
                   onPress={() =>
                     navigation.navigate("vieworder", { authUser: item })
                   }
                 >
                   <Text style={{ color: colors.white }}>Orders</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 {item?.accountStatus == "ban" ? (
                   <TouchableOpacity
                     style={styles.actionButton}
@@ -285,16 +283,16 @@ const ViewRidersScreen = ({ navigation, route }) => {
                 ) : (
                   <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={() => handleBan(item)}
+                    onPress={() => handleAccept(item)}
                   >
-                    <Text style={{ color: colors.white }}>Ban</Text>
+                    <Text style={{ color: colors.white }}>Accept</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
                   style={styles.actionButton}
                   onPress={() => handleDeletePerson(item)}
                 >
-                  <Text style={{ color: colors.white }}>Delete</Text>
+                  <Text style={{ color: colors.white }}>Reject</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -305,7 +303,7 @@ const ViewRidersScreen = ({ navigation, route }) => {
   );
 };
 
-export default ViewRidersScreen;
+export default ViewRidersRequests;
 
 const styles = StyleSheet.create({
   container: {
@@ -362,10 +360,10 @@ const styles = StyleSheet.create({
   },
   container1: {
     display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingBottom: 20,
-    marginBottom: 20,
     elevation: 2,
     marginLeft: 10,
     marginRight: 10,

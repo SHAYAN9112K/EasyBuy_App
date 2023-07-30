@@ -1,15 +1,44 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../constants";
+import { colors, network } from "../../constants";
 import CustomInput from "../../components/CustomInput";
 import CustomButton from "../../components/CustomButton";
-
-const sendInstructionsHandle = () => {
-  //TODO: handle user verfication and mail password reset link
-};
+// import { stringify } from "querystring";r
 
 const ForgetPasswordScreen = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+
+  const sendInstructionsHandle = () => {
+    //TODO: handle user verfication and mail password reset link
+    console.log("helpp333");
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      email: email,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    fetch(`${network.serverip}/sendmail`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("Helpp");
+        if (result.success) {
+          alert("Email sended");
+        } else {
+          alert("Email not sended");
+        }
+      })
+      .catch((error) => {
+        alert("errorrr");
+      });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.TopBarContainer}>
@@ -37,7 +66,11 @@ const ForgetPasswordScreen = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.formContainer}>
-        <CustomInput placeholder={"Enter your Email Address"} />
+        <CustomInput
+          placeholder={"Enter your Email Address"}
+          value={email}
+          setValue={setEmail}
+        />
       </View>
       <CustomButton
         text={"Send Instruction"}
